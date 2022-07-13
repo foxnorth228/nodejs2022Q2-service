@@ -9,6 +9,6 @@ import { ArtistService } from './artists/services/artist.service';
 @Module({
   imports: [],
   controllers: [AppController, UserController, ArtistController],
-  providers: [AppService, UserService],
+  providers: [AppService, UserService, ArtistService],
 })
 export class AppModule {}
