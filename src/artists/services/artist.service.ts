@@ -20,7 +20,6 @@ export class ArtistService {
     findOne(id: string) {
         checkValidation(id);
         const artist = this.artists.find((el) => el.id === id);
-        console.log(this.artists, artist, id);
         if(artist) {
             return artist;
         } else {

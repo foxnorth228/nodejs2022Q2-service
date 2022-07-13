@@ -16,7 +16,6 @@ export class ArtistController {
     @HttpCode(200)
     findOne(@Param() params) {
         const artist = this.artistservice.findOne(params.id);
-        console.log("Artist", artist);
         return artist;
     }
 

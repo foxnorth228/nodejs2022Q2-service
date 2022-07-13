@@ -28,7 +28,6 @@ export class AlbumService {
     }
 
     create(createalbum: CreateAlbumDto) {
-        console.log(createalbum);
         const album = Object.assign({ id: v4() }, createalbum);
         this.albums.push(album);
         return album;

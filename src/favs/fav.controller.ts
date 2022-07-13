@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, HttpCode, Param} from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, HttpCode, Param, Headers} from "@nestjs/common";
 import { FavService } from "./services/fav.service";
 
 @Controller('favs')
@@ -13,8 +13,8 @@ export class FavController {
 
     @Post('artist/:id')
     @HttpCode(201)
-    async addArtist(@Param() params) {
-        return await this.favService.addArtist(params.id);
+    async addArtist(@Param() params, @Headers() header) {
+        return await this.favService.addArtist(params.id, header.host);
     }
 
     @Delete('artist/:id')

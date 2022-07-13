@@ -28,7 +28,6 @@ export class TrackService {
     }
 
     create(createtrack: CreateTrackDto) {
-        console.log(createtrack);
         const track = Object.assign({ id: v4() }, createtrack);
         this.tracks.push(track);
         return track;

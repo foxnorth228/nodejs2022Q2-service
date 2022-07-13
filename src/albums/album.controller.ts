@@ -22,7 +22,6 @@ export class AlbumController{
     @Post()
     @HttpCode(201)
     create(@Body() createArtistDto: CreateAlbumDto) {
-        console.log(createArtistDto)
         return this.albumServise.create(createArtistDto);
     }
 
