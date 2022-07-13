@@ -1,7 +1,7 @@
 import { IAlbum } from "../interfaces/album.interface";
 import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
 import { CreateAlbumDto } from "../dto/create-album.dto";
-import { validate, v4 } from "uuid"
+import { validate, v4 } from "uuid";
 
 const checkValidation = (id) => { 
     if(!validate(id)) {
