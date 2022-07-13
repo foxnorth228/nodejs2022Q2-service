@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body, Request } from "@nestjs/common";
 import { TrackService } from "./services/track.service";
 import { CreateTrackDto } from "./dto/create-track.dto";
 
@@ -22,7 +22,6 @@ export class TrackController {
     @Post()
     @HttpCode(201)
     create(@Body() createArtistDto: CreateTrackDto) {
-        console.log(createArtistDto)
         return this.trackService.create(createArtistDto);
     }
 
