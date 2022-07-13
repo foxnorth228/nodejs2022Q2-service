@@ -4,7 +4,7 @@ import { ArtistService } from "./services/artist.service";
 
 @Controller('artist')
 export class ArtistController {
-    constructor(private artistservice:ArtistService) {}
+    constructor(private artistservice: ArtistService) {}
 
     @Get()
     @HttpCode(200)
