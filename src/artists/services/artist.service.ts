@@ -20,6 +20,7 @@ export class ArtistService {
     findOne(id: string) {
         checkValidation(id);
         const artist = this.artists.find((el) => el.id === id);
+        console.log(this.artists, artist, id);
         if(artist) {
             return artist;
         } else {
@@ -30,7 +31,7 @@ export class ArtistService {
     create(createArtist: CreateArtistDto) {
         const artist = Object.assign({ id: v4() }, createArtist);
         this.artists.push(artist);
-
+        return artist;
     }
 
     update(id: string, createArtist: CreateArtistDto) {
