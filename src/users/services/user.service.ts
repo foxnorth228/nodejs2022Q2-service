@@ -15,7 +15,7 @@ const checkValidation = (id) => {
 export class UserService {
     private readonly users: IUser[] = [];
 
-    async create(user: CreateUserDto) {
+    create(user: CreateUserDto) {
         const newUser = Object.assign({id: v4(), version: 1, createdAt: (new Date()).getTime(), 
             updatedAt: (new Date()).getTime()}, user);
         this.users.push(newUser);
@@ -38,7 +38,7 @@ export class UserService {
         return this.users;
     }
 
-    async update(id: string, user: UpdateUserDto) {
+    update(id: string, user: UpdateUserDto) {
         checkValidation(id);
         const oldUser = this.users.find((el) => el.id === id);
         if(!oldUser) {

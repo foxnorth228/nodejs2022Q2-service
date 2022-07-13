@@ -25,13 +25,13 @@ export class UserController {
     @Post() 
     @HttpCode(201)
     async create(@Body() createUserDto: CreateUserDto) {
-        return await this.userService.create(createUserDto);
+        return this.userService.create(createUserDto);
     }
 
     @Put(':id') 
     @HttpCode(200)
     async rewrite(@Param() params, @Body() updateUserDto: UpdateUserDto) {
-        return await this.userService.update(params.id, updateUserDto);
+        return this.userService.update(params.id, updateUserDto);
     }
 
     @Delete(':id')
