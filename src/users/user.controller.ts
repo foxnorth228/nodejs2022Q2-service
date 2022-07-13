@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Req, Res, Param, HttpStatus, Body } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Req, Res, Param, HttpStatus, Body, HttpCode } from "@nestjs/common";
 import { UserService } from "./services/user.service";
 import "./dto/create-user.dto";
 import { Request, Response} from "express";
@@ -7,31 +7,36 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Controller('user')
 export class UserController {
+
     constructor(private userService: UserService) {}
+
     @Get()
-    findAll(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        res.status(HttpStatus.OK);
+    @HttpCode(200)
+    findAll() {
         return this.userService.findAll();
     }
+
     @Get(':id')
-    findOne(@Param() params, @Res({passthrough: true}) res: Response) {
-        const user = this.userService.findOne(params.id);
-        res.status(HttpStatus.OK);
-        return user;
+    @HttpCode(200)
+    findOne(@Param() params) {
+        return this.userService.findOne(params.id);
     }
+
     @Post() 
-    async create(@Body() createUserDto: CreateUserDto, @Res({passthrough: true}) res: Response) {
-        res.status(HttpStatus.CREATED);
+    @HttpCode(201)
+    async create(@Body() createUserDto: CreateUserDto) {
         return await this.userService.create(createUserDto);
     }
+
     @Put(':id') 
-    async rewrite(@Param() params, @Body() updateUserDto: UpdateUserDto, @Res({passthrough: true}) res: Response) {
-        res.status(HttpStatus.OK);
+    @HttpCode(200)
+    async rewrite(@Param() params, @Body() updateUserDto: UpdateUserDto) {
         return await this.userService.update(params.id, updateUserDto);
     }
-    @Delete(':id') 
-    deleteUser(@Param() params, @Res({passthrough: true}) res: Response) {
+
+    @Delete(':id')
+    @HttpCode(204) 
+    deleteUser(@Param() params) {
         this.userService.delete(params.id);
-        res.status(HttpStatus.NO_CONTENT);
     }
 }
