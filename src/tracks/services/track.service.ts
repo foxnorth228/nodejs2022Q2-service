@@ -56,4 +56,26 @@ export class TrackService {
         await sendRequest(`http://${host}/favs/track/${id}`, "DELETE");
         this.tracks.splice(trackIndex, 1);
     }
+
+    deleteArtistFromTracks(id: string) {
+        let count = 0;
+        for (let track of this.tracks) {
+            if(track.artistId === id) {
+                track.artistId = null;
+                count++;
+            }
+        }
+        return `${count} tracks was changed, artistId was removed`;
+    }
+
+    deleteAlbumFromTracks(id: string) {
+        let count = 0;
+        for (let track of this.tracks) {
+            if(track.albumId === id) {
+                track.albumId = null;
+                count++;
+            }
+        }
+        return `${count} tracks was changed, albumId was removed`;
+    }
 }

@@ -52,6 +52,8 @@ export class ArtistService {
             throw new NotFoundException(`Artist with id: "${id}" is not exist`);
         }
         await sendRequest(`http://${host}/favs/artist/${id}`, "DELETE");
+        await sendRequest(`http://${host}/album/artist/${id}`, "DELETE");
+        await sendRequest(`http://${host}/track/artist/${id}`, "DELETE");
         this.artists.splice(artistIndex, 1);
     }
 }

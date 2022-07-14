@@ -53,6 +53,18 @@ export class AlbumService {
             throw new NotFoundException(`album with id: "${id}" is not exist`);
         }
         await sendRequest(`http://${host}/favs/album/${id}`, "DELETE");
+        await sendRequest(`http://${host}/track/album/${id}`, "DELETE");
         this.albums.splice(albumIndex, 1);
+    }
+
+    deleteArtistFromAlbums(id: string) {
+        let count = 0;
+        for (let album of this.albums) {
+            if(album.artistId === id) {
+                album.artistId = null;
+                count++;
+            }
+        }
+        return `${count} albums was changed, artistId was removed`;
     }
 }

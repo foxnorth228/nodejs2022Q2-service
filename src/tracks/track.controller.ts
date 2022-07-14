@@ -35,4 +35,16 @@ export class TrackController {
     async delete(@Param() params, @Headers() header) {
         await this.trackService.delete(params.id, header.host);
     }
+
+    @Delete('artist/:id')
+    @HttpCode(204)
+    deleteArtistFromTracks(@Param() params) {
+        this.trackService.deleteArtistFromTracks(params.id);
+    }
+
+    @Delete('album/:id')
+    @HttpCode(204)
+    deleteAlbumFromTracks(@Param() params) {
+        this.trackService.deleteAlbumFromTracks(params.id);
+    }
 }

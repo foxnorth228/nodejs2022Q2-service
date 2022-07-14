@@ -31,6 +31,12 @@ export class AlbumController{
         return this.albumServise.update(params.id, updateArtistDto);
     }
 
+    @Delete('artist/:id')
+    @HttpCode(204)
+    deleteArtistFromAlbums(@Param() params) {
+        this.albumServise.deleteArtistFromAlbums(params.id);
+    }
+
     @Delete(':id')
     @HttpCode(204)
     async delete(@Param() params, @Headers() header) {
