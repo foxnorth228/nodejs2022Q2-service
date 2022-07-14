@@ -7,8 +7,8 @@ export class FavController {
 
     @Get()
     @HttpCode(200)
-    async findAll() {
-
+    async findAll(@Headers() header) {
+        return await this.favService.getAllFavs(header.host);
     }
 
     @Post('artist/:id')
@@ -19,31 +19,31 @@ export class FavController {
 
     @Delete('artist/:id')
     @HttpCode(204)
-    async removeArtist() {
-
+    async removeArtist(@Param() params) {
+        return await this.favService.removeArtist(params.id);
     }
 
-    @Post('artist/:id')
+    @Post('album/:id')
     @HttpCode(201)
-    async addAlbum() {
-
+    async addAlbum(@Param() params, @Headers() header) {
+        return await this.favService.addAlbum(params.id, header.host);
     }
 
-    @Delete('artist/:id')
+    @Delete('album/:id')
     @HttpCode(204)
-    async removeAlbum() {
-
+    async removeAlbum(@Param() params) {
+        return await this.favService.removeAlbum(params.id);
     }
 
-    @Post('artist/:id')
+    @Post('track/:id')
     @HttpCode(201)
-    async addTrack() {
-
+    async addTrack(@Param() params, @Headers() header) {
+        return await this.favService.addTrack(params.id, header.host);
     }
 
-    @Delete('artist/:id')
+    @Delete('track/:id')
     @HttpCode(204)
-    async removeTrack() {
-
+    async removeTrack(@Param() params) {
+        return await this.favService.removeTrack(params.id);
     }
 }
