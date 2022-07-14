@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body, Headers } from "@nestjs/common";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { ArtistService } from "./services/artist.service";
 
@@ -33,7 +33,7 @@ export class ArtistController {
 
     @Delete(':id')
     @HttpCode(204)
-    delete(@Param() params) {
-        this.artistservice.delete(params.id);
+    async delete(@Param() params, @Headers() header) {
+        await this.artistservice.delete(params.id, header.host);
     }
 }

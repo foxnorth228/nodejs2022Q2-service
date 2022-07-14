@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from "@nestjs/comm
 import { IArtist } from "../interfaces/artist.interface";
 import { CreateArtistDto } from "../dto/create-artist.dto";
 import { validate, v4 } from "uuid"
+import { sendRequest } from "src/sendRequest";
 
 const checkValidation = (id) => { 
     if(!validate(id)) {
@@ -44,12 +45,13 @@ export class ArtistService {
         return artist;
     }
 
-    delete(id: string) {
+    async delete(id: string, host: string) {
         checkValidation(id);
         const artistIndex = this.artists.findIndex((el) => el.id === id);
         if(artistIndex === -1) {
             throw new NotFoundException(`Artist with id: "${id}" is not exist`);
         }
+        await sendRequest(`http://${host}/favs/artist/${id}`, "DELETE");
         this.artists.splice(artistIndex, 1);
     }
 }

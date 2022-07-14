@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from "@nestjs/comm
 import { ITrack } from "../interfaces/track.interface";
 import { CreateTrackDto } from "../dto/create-track.dto";
 import { validate, v4 } from "uuid";
+import { sendRequest } from "src/sendRequest";
 
 const checkValidation = (id) => { 
     if(!validate(id)) {
@@ -46,12 +47,13 @@ export class TrackService {
         return track;
     }
 
-    delete(id: string) {
+    async delete(id: string, host) {
         checkValidation(id);
         const trackIndex = this.tracks.findIndex((el) => el.id === id);
         if(trackIndex === -1) {
             throw new NotFoundException(`track with id: "${id}" is not exist`);
         }
+        await sendRequest(`http://${host}/favs/track/${id}`, "DELETE");
         this.tracks.splice(trackIndex, 1);
     }
 }

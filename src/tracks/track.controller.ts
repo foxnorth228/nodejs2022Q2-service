@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body, Request } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body, Headers } from "@nestjs/common";
 import { TrackService } from "./services/track.service";
 import { CreateTrackDto } from "./dto/create-track.dto";
 
@@ -15,8 +15,7 @@ export class TrackController {
     @Get(':id')
     @HttpCode(200)
     findOne(@Param() params) {
-        const artist = this.trackService.findOne(params.id);
-        return artist;
+        return this.trackService.findOne(params.id);
     }
 
     @Post()
@@ -33,7 +32,7 @@ export class TrackController {
 
     @Delete(':id')
     @HttpCode(204)
-    delete(@Param() params) {
-        this.trackService.delete(params.id);
+    async delete(@Param() params, @Headers() header) {
+        await this.trackService.delete(params.id, header.host);
     }
 }

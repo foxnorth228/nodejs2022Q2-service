@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, HttpCode, Param, Body, Headers } from "@nestjs/common";
 import { AlbumService } from "./services/album.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 
@@ -33,7 +33,7 @@ export class AlbumController{
 
     @Delete(':id')
     @HttpCode(204)
-    delete(@Param() params) {
-        this.albumServise.delete(params.id);
+    async delete(@Param() params, @Headers() header) {
+        await this.albumServise.delete(params.id, header.host);
     }
 }

@@ -2,6 +2,7 @@ import { IAlbum } from "../interfaces/album.interface";
 import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
 import { CreateAlbumDto } from "../dto/create-album.dto";
 import { validate, v4 } from "uuid";
+import { sendRequest } from "src/sendRequest";
 
 const checkValidation = (id) => { 
     if(!validate(id)) {
@@ -45,12 +46,13 @@ export class AlbumService {
         return album;
     }
 
-    delete(id: string) {
+    async delete(id: string, host: string) {
         checkValidation(id);
         const albumIndex = this.albums.findIndex((el) => el.id === id);
         if(albumIndex === -1) {
             throw new NotFoundException(`album with id: "${id}" is not exist`);
         }
+        await sendRequest(`http://${host}/favs/album/${id}`, "DELETE");
         this.albums.splice(albumIndex, 1);
     }
 }
