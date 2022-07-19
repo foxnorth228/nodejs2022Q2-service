@@ -19,8 +19,8 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
@@ -38,12 +38,12 @@ export class UserController {
   @Put(':id')
   @HttpCode(200)
   async rewrite(@Param() params, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(params.id, updateUserDto);
+    return await this.userService.update(params.id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  deleteUser(@Param() params) {
-    this.userService.delete(params.id);
+  async deleteUser(@Param() params) {
+    await this.userService.delete(params.id);
   }
 }

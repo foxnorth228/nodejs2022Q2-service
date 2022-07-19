@@ -56,7 +56,6 @@ export class UserService {
         id: id,
       }
     });
-    console.log("user", user, user2)
     if (user2) {
       return user2;
     } else {
@@ -64,17 +63,22 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return this.users;
+  async findAll() {
+    return await prismaClient.user.findMany({});
   }
 
-  update(id: string, user: UpdateUserDto) {
+  async update(id: string, user: UpdateUserDto) {
     checkValidation(id);
     const oldUser = this.users.find((el) => el.id === id);
-    if (!oldUser) {
+    const oldUser2 = await prismaClient.user.findUnique({
+      where: {
+        id: id,
+      },
+    })
+    if (!oldUser2) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
-    if (oldUser.password !== user.oldPassword) {
+    if (oldUser2.password !== user.oldPassword) {
       throw new ForbiddenException(
         `Old password "${user.oldPassword} is incorrect`,
       );
@@ -82,17 +86,36 @@ export class UserService {
     oldUser.password = user.newPassword;
     oldUser.version += 1;
     oldUser.updatedAt = new Date().getTime();
+    const sendUser2 = await prismaClient.user.update({
+      where: {
+        id: id,
+      }, 
+      data: {
+        password: user.newPassword,
+        version: oldUser2.version + 1,
+        updatedAt: new Date().getTime(),
+      },
+    })
     const sendUser = Object.assign({}, oldUser);
-    delete sendUser.password;
-    return sendUser;
+    delete sendUser2.password;
+    return sendUser2;
   }
 
-  delete(id: string) {
+  async delete(id: string) {
     checkValidation(id);
-    const userIndex = this.users.findIndex((el) => el.id === id);
-    if (userIndex === -1) {
+    const user = await prismaClient.user.findUnique({
+      where: {
+        id: id,
+      }
+    });
+    if (!user) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
-    this.users.splice(userIndex, 1);
+    console.log("user", user);
+    const a = await prismaClient.user.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 }

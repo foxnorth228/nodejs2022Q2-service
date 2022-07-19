@@ -15,3 +15,31 @@ model User {
   createdAt Int
   updatedAt Int
 }
+
+model Albun {
+  id       String @id
+  name     String
+  year     Int
+  artistId String
+}
+
+model Artist {
+  id     String  @id
+  name   String
+  grammy Boolean
+}
+
+model Track {
+  id       String @id
+  albumId  String
+  artistId String
+  duration Int
+  name     String
+}
+
+model Fav {
+  id      String   @id
+  artists String[]
+  albums  String[]
+  tracks  String[]
+}
