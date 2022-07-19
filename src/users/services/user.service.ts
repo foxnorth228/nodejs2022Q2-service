@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { validate } from 'uuid';
+import { prismaClient } from "../../prisma";
 
 const checkValidation = (id) => {
   if (!validate(id)) {
@@ -20,7 +21,7 @@ const checkValidation = (id) => {
 export class UserService {
   private readonly users: IUser[] = [];
 
-  create(user: CreateUserDto) {
+  async create(user: CreateUserDto) {
     const newUser = Object.assign(
       {
         id: v4(),
@@ -31,16 +32,33 @@ export class UserService {
       user,
     );
     this.users.push(newUser);
+    const user2 = await prismaClient.user.create({
+      data: {
+        id: newUser.id,
+        login: newUser.login,
+        password: newUser.password,
+        version: newUser.version,
+        createdAt: newUser.createdAt,
+        updatedAt: newUser.updatedAt,
+      }
+    });
+    //console.log(user2);
     const sendUser = Object.assign({}, newUser);
     delete sendUser.password;
     return sendUser;
   }
 
-  findOne(id) {
+  async findOne(id: string) {
     checkValidation(id);
     const user = this.users.find((el) => el.id === id);
-    if (user) {
-      return user;
+    const user2 = await prismaClient.user.findUnique({
+      where: {
+        id: id,
+      }
+    });
+    console.log("user", user, user2)
+    if (user2) {
+      return user2;
     } else {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }

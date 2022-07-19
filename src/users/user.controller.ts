@@ -25,14 +25,14 @@ export class UserController {
 
   @Get(':id')
   @HttpCode(200)
-  findOne(@Param() params) {
-    return this.userService.findOne(params.id);
+  async findOne(@Param() params) {
+    return await this.userService.findOne(params.id);
   }
 
   @Post()
   @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Put(':id')
