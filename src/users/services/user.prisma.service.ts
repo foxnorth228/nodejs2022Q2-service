@@ -1,10 +1,11 @@
 import { IUser } from "../interfaces/user.interface";
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../prisma";
+import { elementPrismaService } from "../../abstractClass";
 
 @Injectable()
-export class UserPrismaService {
-    constructor(private prismaService: PrismaService) {}
+export class UserPrismaService extends elementPrismaService<IUser> {
+    constructor(private prismaService: PrismaService) { super() }
     async create(user: IUser): Promise<IUser> {
         const createdUser = await this.prismaService.user.create({
             data: {
@@ -32,14 +33,14 @@ export class UserPrismaService {
         return await this.prismaService.user.findMany({});
     }
 
-    async update(id: string, password: string, version): Promise<IUser> {
+    async update(id: string, oldUser: IUser): Promise<IUser> {
         const user = await this.prismaService.user.update({
             where: {
                 id: id,
             },
             data: {
-                password: password,
-                version: version + 1,
+                password: oldUser.password,
+                version: oldUser.version + 1,
                 updatedAt: new Date().getTime(),
             }
         });

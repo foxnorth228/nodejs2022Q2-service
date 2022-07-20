@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { IArtist } from '../interfaces/artist.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { sendRequest } from 'src/sendRequest';
 import { ArtistPrismaService } from './artist.prisma.service';
@@ -11,12 +10,10 @@ import { createId } from "../../createId";
 
 @Injectable()
 export class ArtistService {
-  private readonly artists: IArtist[] = [];
   constructor(private artistPrismaService: ArtistPrismaService) {}
 
   async findAll() {
-    await this.artistPrismaService.findAll();
-    return this.artists;
+    return await this.artistPrismaService.findAll();
   }
 
   async findOne(id: string) {

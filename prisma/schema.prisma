@@ -16,11 +16,11 @@ model User {
   updatedAt Int
 }
 
-model Albun {
+model Album {
   id       String @id
   name     String
   year     Int
-  artistId String
+  artistId String?
 }
 
 model Artist {
@@ -31,8 +31,8 @@ model Artist {
 
 model Track {
   id       String @id
-  albumId  String
-  artistId String
+  albumId  String?
+  artistId String?
   duration Int
   name     String
 }

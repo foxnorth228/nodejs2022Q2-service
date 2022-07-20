@@ -14,6 +14,7 @@ import { FavService } from './favs/services/fav.service';
 import { PrismaModule } from './prisma.module';
 import { UserPrismaService } from './users/services/user.prisma.service';
 import { ArtistPrismaService } from './artists/services/artist.prisma.service';
+import { AlbumPrismaService } from './albums/services/album.prisma.service';
 
 @Module({
   imports: [PrismaModule],
@@ -34,6 +35,7 @@ import { ArtistPrismaService } from './artists/services/artist.prisma.service';
     FavService,
     UserPrismaService,
     ArtistPrismaService,
+    AlbumPrismaService,
   ],
 })
 export class AppModule {}

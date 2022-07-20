@@ -60,7 +60,8 @@ export class UserService {
     if (oldUser.password !== user.oldPassword) {
       throw new ForbiddenException(`Old password "${user.oldPassword} is incorrect`);
     }
-    const updatedUser = await this.userPrismaService.update(id, user.newPassword, oldUser.version);
+    oldUser.password = user.newPassword;
+    const updatedUser = await this.userPrismaService.update(id, oldUser);
     const sendUser = Object.assign({}, updatedUser);
     delete sendUser.password;
     return sendUser;
