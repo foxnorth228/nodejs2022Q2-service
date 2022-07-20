@@ -15,6 +15,7 @@ import { PrismaModule } from './prisma.module';
 import { UserPrismaService } from './users/services/user.prisma.service';
 import { ArtistPrismaService } from './artists/services/artist.prisma.service';
 import { AlbumPrismaService } from './albums/services/album.prisma.service';
+import { TrackPrismaService } from './tracks/services/track.prisma.service';
 
 @Module({
   imports: [PrismaModule],
@@ -36,6 +37,7 @@ import { AlbumPrismaService } from './albums/services/album.prisma.service';
     UserPrismaService,
     ArtistPrismaService,
     AlbumPrismaService,
+    TrackPrismaService,
   ],
 })
 export class AppModule {}

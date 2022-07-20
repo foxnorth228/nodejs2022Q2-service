@@ -17,7 +17,7 @@ model User {
 }
 
 model Album {
-  id       String @id
+  id       String  @id
   name     String
   year     Int
   artistId String?
@@ -30,7 +30,7 @@ model Artist {
 }
 
 model Track {
-  id       String @id
+  id       String  @id
   albumId  String?
   artistId String?
   duration Int
