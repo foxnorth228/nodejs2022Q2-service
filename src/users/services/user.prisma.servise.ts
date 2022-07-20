@@ -1,4 +1,4 @@
-import { IUser } from "../user.interface";
+import { IUser } from "../interfaces/user.interface";
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../prisma";
 
@@ -27,7 +27,30 @@ export class UserPrismaService {
         });
         return user;
     }
+
     async findAll(): Promise<Array<IUser>> {
         return await this.prismaService.user.findMany({});
+    }
+
+    async update(id: string, password: string, version): Promise<IUser> {
+        const user = await this.prismaService.user.update({
+            where: {
+                id: id,
+            },
+            data: {
+                password: password,
+                version: version + 1,
+                updatedAt: new Date().getTime(),
+            }
+        });
+        return user;
+    }
+
+    async delete(id: string) {
+        await this.prismaService.user.delete({
+            where: {
+              id: id,
+            },
+        });
     }
 }

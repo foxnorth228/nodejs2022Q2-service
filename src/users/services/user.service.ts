@@ -4,7 +4,7 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { IUser } from '../user.interface';
+import { IUser } from '../interfaces/user.interface';
 import { v4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -12,7 +12,7 @@ import { validate } from 'uuid';
 import { PrismaService } from 'src/prisma';
 import { UserPrismaService } from "./user.prisma.servise";
 
-const checkValidation = (id) => {
+const checkValidation = (id: string) => {
   if (!validate(id)) {
     throw new BadRequestException(`This id: "${id}" is not valid`);
   }
@@ -20,13 +20,17 @@ const checkValidation = (id) => {
 
 @Injectable()
 export class UserService {
-  constructor(private userPrismaService: UserPrismaService, private prismaClient: PrismaService) {};
-  private readonly users: IUser[] = [];
+  constructor(private userPrismaService: UserPrismaService) {};
 
   async create(user: CreateUserDto) {
+    let id = v4();
+    while((await this.userPrismaService.findOne(id))) {
+      id = v4();
+    }
+
     const newUser = Object.assign(
       {
-        id: v4(),
+        id: id,
         version: 1,
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
@@ -42,11 +46,10 @@ export class UserService {
   async findOne(id: string) {
     checkValidation(id);
     const user = await this.userPrismaService.findOne(id);
-    if (user) {
-      return user;
-    } else {
+    if (!user) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
+    return user;
   }
 
   async findAll() {
@@ -55,53 +58,25 @@ export class UserService {
 
   async update(id: string, user: UpdateUserDto) {
     checkValidation(id);
-    const oldUser = this.users.find((el) => el.id === id);
-    const oldUser2 = await this.prismaClient.user.findUnique({
-      where: {
-        id: id,
-      },
-    })
-    if (!oldUser2) {
+    const oldUser = await this.userPrismaService.findOne(id);
+    if (!oldUser) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
-    if (oldUser2.password !== user.oldPassword) {
-      throw new ForbiddenException(
-        `Old password "${user.oldPassword} is incorrect`,
-      );
+    if (oldUser.password !== user.oldPassword) {
+      throw new ForbiddenException(`Old password "${user.oldPassword} is incorrect`);
     }
-    oldUser.password = user.newPassword;
-    oldUser.version += 1;
-    oldUser.updatedAt = new Date().getTime();
-    const sendUser2 = await this.prismaClient.user.update({
-      where: {
-        id: id,
-      }, 
-      data: {
-        password: user.newPassword,
-        version: oldUser2.version + 1,
-        updatedAt: new Date().getTime(),
-      },
-    })
-    const sendUser = Object.assign({}, oldUser);
-    delete sendUser2.password;
-    return sendUser2;
+    const updatedUser = await this.userPrismaService.update(id, user.newPassword, oldUser.version);
+    const sendUser = Object.assign({}, updatedUser);
+    delete sendUser.password;
+    return sendUser;
   }
 
   async delete(id: string) {
     checkValidation(id);
-    const user = await this.prismaClient.user.findUnique({
-      where: {
-        id: id,
-      }
-    });
+    const user = await this.userPrismaService.findOne(id);
     if (!user) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
-    console.log("user", user);
-    const a = await this.prismaClient.user.delete({
-      where: {
-        id: id,
-      },
-    });
+    await this.userPrismaService.delete(id);
   }
 }
