@@ -1,23 +1,18 @@
 import {
   Injectable,
-  BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
 import { IArtist } from '../interfaces/artist.interface';
 import { CreateArtistDto } from '../dto/create-artist.dto';
-import { validate, v4 } from 'uuid';
+import { v4 } from 'uuid';
 import { sendRequest } from 'src/sendRequest';
-
-const checkValidation = (id) => {
-  if (!validate(id)) {
-    throw new BadRequestException(`This id: "${id}" is not valid`);
-  }
-};
+import { ArtistPrismaService } from './artist.prisma.service';
+import { checkValidation } from '../../checkValidation';
 
 @Injectable()
 export class ArtistService {
   private readonly artists: IArtist[] = [];
-
+  constructor(private artistPrismaService: ArtistPrismaService) {}
   findAll() {
     return this.artists;
   }

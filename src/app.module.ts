@@ -13,6 +13,7 @@ import { TrackService } from './tracks/services/track.service';
 import { FavService } from './favs/services/fav.service';
 import { PrismaModule } from './prisma.module';
 import { UserPrismaService } from './users/services/user.prisma.service';
+import { ArtistPrismaService } from './artists/services/artist.prisma.service';
 
 @Module({
   imports: [PrismaModule],
@@ -32,6 +33,7 @@ import { UserPrismaService } from './users/services/user.prisma.service';
     TrackService,
     FavService,
     UserPrismaService,
+    ArtistPrismaService,
   ],
 })
 export class AppModule {}
