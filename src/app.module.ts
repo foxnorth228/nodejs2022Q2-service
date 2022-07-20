@@ -11,9 +11,11 @@ import { ArtistService } from './artists/services/artist.service';
 import { AlbumService } from './albums/services/album.service';
 import { TrackService } from './tracks/services/track.service';
 import { FavService } from './favs/services/fav.service';
+import { PrismaModule } from './prisma.module';
+import { UserPrismaService } from './users/services/user.prisma.servise';
 
 @Module({
-  imports: [],
+  imports: [PrismaModule],
   controllers: [
     AppController,
     UserController,
@@ -29,6 +31,7 @@ import { FavService } from './favs/services/fav.service';
     AlbumService,
     TrackService,
     FavService,
+    UserPrismaService,
   ],
 })
 export class AppModule {}

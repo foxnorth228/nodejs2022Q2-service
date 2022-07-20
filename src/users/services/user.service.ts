@@ -9,7 +9,8 @@ import { v4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { validate } from 'uuid';
-import { prismaClient } from "../../prisma";
+import { PrismaService } from 'src/prisma';
+import { UserPrismaService } from "./user.prisma.servise";
 
 const checkValidation = (id) => {
   if (!validate(id)) {
@@ -19,6 +20,7 @@ const checkValidation = (id) => {
 
 @Injectable()
 export class UserService {
+  constructor(private userPrismaService: UserPrismaService, private prismaClient: PrismaService) {};
   private readonly users: IUser[] = [];
 
   async create(user: CreateUserDto) {
@@ -31,46 +33,30 @@ export class UserService {
       },
       user,
     );
-    this.users.push(newUser);
-    const user2 = await prismaClient.user.create({
-      data: {
-        id: newUser.id,
-        login: newUser.login,
-        password: newUser.password,
-        version: newUser.version,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
-      }
-    });
-    //console.log(user2);
-    const sendUser = Object.assign({}, newUser);
+    const createdUser = await this.userPrismaService.create(newUser);
+    const sendUser = Object.assign({}, createdUser);
     delete sendUser.password;
     return sendUser;
   }
 
   async findOne(id: string) {
     checkValidation(id);
-    const user = this.users.find((el) => el.id === id);
-    const user2 = await prismaClient.user.findUnique({
-      where: {
-        id: id,
-      }
-    });
-    if (user2) {
-      return user2;
+    const user = await this.userPrismaService.findOne(id);
+    if (user) {
+      return user;
     } else {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
   }
 
   async findAll() {
-    return await prismaClient.user.findMany({});
+    return await this.userPrismaService.findAll();
   }
 
   async update(id: string, user: UpdateUserDto) {
     checkValidation(id);
     const oldUser = this.users.find((el) => el.id === id);
-    const oldUser2 = await prismaClient.user.findUnique({
+    const oldUser2 = await this.prismaClient.user.findUnique({
       where: {
         id: id,
       },
@@ -86,7 +72,7 @@ export class UserService {
     oldUser.password = user.newPassword;
     oldUser.version += 1;
     oldUser.updatedAt = new Date().getTime();
-    const sendUser2 = await prismaClient.user.update({
+    const sendUser2 = await this.prismaClient.user.update({
       where: {
         id: id,
       }, 
@@ -103,7 +89,7 @@ export class UserService {
 
   async delete(id: string) {
     checkValidation(id);
-    const user = await prismaClient.user.findUnique({
+    const user = await this.prismaClient.user.findUnique({
       where: {
         id: id,
       }
@@ -112,7 +98,7 @@ export class UserService {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
     console.log("user", user);
-    const a = await prismaClient.user.delete({
+    const a = await this.prismaClient.user.delete({
       where: {
         id: id,
       },
