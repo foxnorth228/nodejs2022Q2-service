@@ -9,6 +9,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { validate } from 'uuid';
 import { UserPrismaService } from "./user.prisma.service";
+import { createId } from '../../createId';
 
 const checkValidation = (id: string) => {
   if (!validate(id)) {
@@ -21,11 +22,7 @@ export class UserService {
   constructor(private userPrismaService: UserPrismaService) {};
 
   async create(user: CreateUserDto) {
-    let id = v4();
-    while((await this.userPrismaService.findOne(id))) {
-      id = v4();
-    }
-
+    const id = await createId(this.userPrismaService, "findOne");
     const newUser = Object.assign(
       {
         id: id,
