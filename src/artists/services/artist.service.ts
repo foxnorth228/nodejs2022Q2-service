@@ -1,12 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { sendRequest } from 'src/sendRequest';
 import { ArtistPrismaService } from './artist.prisma.service';
 import { checkValidation } from '../../checkValidation';
-import { createId } from "../../createId";
+import { createId } from '../../createId';
 
 @Injectable()
 export class ArtistService {
@@ -26,7 +23,7 @@ export class ArtistService {
   }
 
   async create(createArtist: CreateArtistDto) {
-    let id = await createId(this.artistPrismaService, "findOne");
+    const id = await createId(this.artistPrismaService, 'findOne');
     const artist = Object.assign({ id: id }, createArtist);
     const createdArtist = await this.artistPrismaService.create(artist);
     return createdArtist;
@@ -38,7 +35,10 @@ export class ArtistService {
     if (!artist) {
       throw new NotFoundException(`Artist with id: "${id}" is not exist`);
     }
-    const updatedArtist = await this.artistPrismaService.update(id, createArtist);
+    const updatedArtist = await this.artistPrismaService.update(
+      id,
+      createArtist,
+    );
     return updatedArtist;
   }
 

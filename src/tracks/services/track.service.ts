@@ -35,11 +35,8 @@ export class TrackService {
   }
 
   async create(createtrack: CreateTrackDto) {
-    const id = await createId(this.trackPrismaService, "findOne");
-    const track = Object.assign(
-      { id: id }, 
-      createtrack
-    );
+    const id = await createId(this.trackPrismaService, 'findOne');
+    const track = Object.assign({ id: id }, createtrack);
     const createdTrack = await this.trackPrismaService.create(track);
     return createdTrack;
   }

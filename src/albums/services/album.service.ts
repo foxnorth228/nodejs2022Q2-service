@@ -1,14 +1,11 @@
 import { IAlbum } from '../interfaces/album.interface';
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { v4 } from 'uuid';
 import { sendRequest } from 'src/sendRequest';
 import { checkValidation } from 'src/checkValidation';
 import { AlbumPrismaService } from './album.prisma.service';
-import { createId } from '../../createId'; 
+import { createId } from '../../createId';
 
 @Injectable()
 export class AlbumService {
@@ -29,11 +26,8 @@ export class AlbumService {
   }
 
   async create(createalbum: CreateAlbumDto) {
-    const id = await createId(this.albumPrismaService, "findOne");
-    const album = Object.assign(
-      { id: id }, 
-      createalbum
-    );
+    const id = await createId(this.albumPrismaService, 'findOne');
+    const album = Object.assign({ id: id }, createalbum);
     const createdAlbum = await this.albumPrismaService.create(album);
     return createdAlbum;
   }

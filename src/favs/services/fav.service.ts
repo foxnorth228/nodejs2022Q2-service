@@ -10,7 +10,7 @@ import { IFavBody } from '../interfaces/fav-body.interface';
 import { IFav } from '../interfaces/fav.interface';
 import { sendRequest } from '../../sendRequest';
 import { checkValidation } from 'src/checkValidation';
-import { FavPrismaService } from "./fav.prisma.servise";
+import { FavPrismaService } from './fav.prisma.servise';
 
 interface IAnswer {
   statusCode: number;
@@ -48,7 +48,9 @@ export class FavService {
     checkValidation(id);
     const artist = await this.favPrismaService.getArtist(id);
     if (!artist) {
-      throw new UnprocessableEntityException(`Artist with id: "${id}" didn't exist`);
+      throw new UnprocessableEntityException(
+        `Artist with id: "${id}" didn't exist`,
+      );
     }
     await this.favPrismaService.addArtist(id);
     return `Artist id: "${id}" successfully added to favourites`;
@@ -68,7 +70,9 @@ export class FavService {
     checkValidation(id);
     const artist = await this.favPrismaService.getAlbum(id);
     if (!artist) {
-      throw new UnprocessableEntityException(`Artist with id: "${id}" didn't exist`);
+      throw new UnprocessableEntityException(
+        `Artist with id: "${id}" didn't exist`,
+      );
     }
     await this.favPrismaService.addAlbum(id);
     return `Artist id: "${id}" successfully added to favourites`;
@@ -88,7 +92,9 @@ export class FavService {
     checkValidation(id);
     const artist = await this.favPrismaService.getTrack(id);
     if (!artist) {
-      throw new UnprocessableEntityException(`Artist with id: "${id}" didn't exist`);
+      throw new UnprocessableEntityException(
+        `Artist with id: "${id}" didn't exist`,
+      );
     }
     await this.favPrismaService.addTrack(id);
     return `Artist id: "${id}" successfully added to favourites`;

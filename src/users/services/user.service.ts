@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { validate } from 'uuid';
-import { UserPrismaService } from "./user.prisma.service";
+import { UserPrismaService } from './user.prisma.service';
 import { createId } from '../../createId';
 
 const checkValidation = (id: string) => {
@@ -19,10 +19,10 @@ const checkValidation = (id: string) => {
 
 @Injectable()
 export class UserService {
-  constructor(private userPrismaService: UserPrismaService) {};
+  constructor(private userPrismaService: UserPrismaService) {}
 
   async create(user: CreateUserDto) {
-    const id = await createId(this.userPrismaService, "findOne");
+    const id = await createId(this.userPrismaService, 'findOne');
     const newUser = Object.assign(
       {
         id: id,
@@ -58,7 +58,9 @@ export class UserService {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
     }
     if (oldUser.password !== user.oldPassword) {
-      throw new ForbiddenException(`Old password "${user.oldPassword} is incorrect`);
+      throw new ForbiddenException(
+        `Old password "${user.oldPassword} is incorrect`,
+      );
     }
     oldUser.password = user.newPassword;
     const updatedUser = await this.userPrismaService.update(id, oldUser);
