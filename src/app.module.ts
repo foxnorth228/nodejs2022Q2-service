@@ -12,7 +12,7 @@ import { AlbumService } from './albums/services/album.service';
 import { TrackService } from './tracks/services/track.service';
 import { FavService } from './favs/services/fav.service';
 import { PrismaModule } from './prisma.module';
-import { UserPrismaService } from './users/services/user.prisma.servise';
+import { UserPrismaService } from './users/services/user.prisma.service';
 
 @Module({
   imports: [PrismaModule],

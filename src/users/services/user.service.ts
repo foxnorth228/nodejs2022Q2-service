@@ -4,13 +4,11 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { IUser } from '../interfaces/user.interface';
 import { v4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { validate } from 'uuid';
-import { PrismaService } from 'src/prisma';
-import { UserPrismaService } from "./user.prisma.servise";
+import { UserPrismaService } from "./user.prisma.service";
 
 const checkValidation = (id: string) => {
   if (!validate(id)) {
