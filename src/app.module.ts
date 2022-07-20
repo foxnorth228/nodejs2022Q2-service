@@ -16,6 +16,7 @@ import { UserPrismaService } from './users/services/user.prisma.service';
 import { ArtistPrismaService } from './artists/services/artist.prisma.service';
 import { AlbumPrismaService } from './albums/services/album.prisma.service';
 import { TrackPrismaService } from './tracks/services/track.prisma.service';
+import { FavPrismaService } from './favs/services/fav.prisma.servise';
 
 @Module({
   imports: [PrismaModule],
