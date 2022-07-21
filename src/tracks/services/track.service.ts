@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ITrack } from '../interfaces/track.interface';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { sendRequest } from '../../secondaryFuncs/sendRequest';
@@ -10,9 +7,7 @@ import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 
 @Injectable()
 export class TrackService {
-  private readonly tracks: ITrack[] = [];
-  constructor(private trackPrismaService: TrackPrismaService) {}
-
+  private trackPrismaService: TrackPrismaService = new TrackPrismaService();
   async findAll() {
     return await this.trackPrismaService.findAll();
   }

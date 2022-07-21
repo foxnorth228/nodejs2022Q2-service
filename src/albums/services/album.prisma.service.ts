@@ -1,15 +1,10 @@
 import { IAlbum } from '../interfaces/album.interface';
-import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma';
 import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 
-@Injectable()
 export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
-  constructor(private prismaService: PrismaService) {
-    super();
-  }
-
+  private prismaService: PrismaService = new PrismaService();
   async create(album: IAlbum): Promise<IAlbum> {
     const createdAlbum = await this.prismaService.album.create({
       data: {

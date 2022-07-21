@@ -1,16 +1,13 @@
 import { IAlbum } from '../interfaces/album.interface';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from '../dto/create-album.dto';
-import { v4 } from 'uuid';
 import { sendRequest } from '../../secondaryFuncs/sendRequest';
 import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 import { AlbumPrismaService } from './album.prisma.service';
 
 @Injectable()
 export class AlbumService {
-  private readonly albums: IAlbum[] = [];
-  constructor(private albumPrismaService: AlbumPrismaService) {}
-
+  private albumPrismaService: AlbumPrismaService = new AlbumPrismaService();
   async findAll() {
     return await this.albumPrismaService.findAll();
   }

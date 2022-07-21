@@ -1,12 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { TemplatePrismaService } from 'src/secondaryFuncs/TemplatePrismaService';
 import { PrismaService } from '../../prisma/prisma';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 
-@Injectable()
-export class ArtistPrismaService {
-  constructor(private prismaService: PrismaService) {}
-
+export class ArtistPrismaService extends TemplatePrismaService<IArtist> {
+  private prismaService: PrismaService = new PrismaService();
   async create(artist: IArtist): Promise<IArtist> {
     const createdArtist = await this.prismaService.artist.create({
       data: {

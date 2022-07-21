@@ -1,14 +1,13 @@
 import { ITrack } from '../interfaces/track.interface';
-import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma';
 import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
 import { CreateTrackDto } from '../dto/create-track.dto';
 
-@Injectable()
 export class TrackPrismaService extends TemplatePrismaService<ITrack> {
-  constructor(private prismaService: PrismaService) {
+  constructor() {
     super();
   }
+  private prismaService: PrismaService = new PrismaService();
   async findOne(id: string): Promise<ITrack | null> {
     const track = await this.prismaService.track.findUnique({
       where: {

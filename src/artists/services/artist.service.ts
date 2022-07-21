@@ -6,8 +6,7 @@ import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 
 @Injectable()
 export class ArtistService {
-  constructor(private artistPrismaService: ArtistPrismaService) {}
-
+  private artistPrismaService: ArtistPrismaService = new ArtistPrismaService();
   async findAll() {
     return await this.artistPrismaService.findAll();
   }
