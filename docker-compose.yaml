@@ -1,18 +1,33 @@
-version: '3.8'
 services:
-
-  # Docker connection string: postgres://postgres:postgres@localhost:54321/
-
-  postgres:
-    image: postgres:latest
-    container_name: postgre
-    restart: always
-    env_file:
-      - .env
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      # Only will build development stage from our dockerfile
+      target: development
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+    - docker.env
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - '5432:5432'
+    volumes:
+      - docker-nest-postgres:/var/lib/postgresql/data
 
 volumes:
-  postgres:
+  docker-nest-postgres:
