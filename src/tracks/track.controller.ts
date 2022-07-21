@@ -24,8 +24,8 @@ export class TrackController {
 
   @Get(':id')
   @HttpCode(200)
-  findOne(@Param() params) {
-    return this.trackService.findOne(params.id);
+  findOne(@Param('id') id: string) {
+    return this.trackService.findOne(id);
   }
 
   @Post()
@@ -36,25 +36,25 @@ export class TrackController {
 
   @Put(':id')
   @HttpCode(200)
-  update(@Body() updateArtistDto: CreateTrackDto, @Param() params) {
-    return this.trackService.update(params.id, updateArtistDto);
+  update( @Param('id') id: string, @Body() updateArtistDto: CreateTrackDto) {
+    return this.trackService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param() params, @Headers() header) {
-    await this.trackService.delete(params.id, header.host);
+  async delete(@Param('id') id: string, @Headers('host') host: string) {
+    await this.trackService.delete(id, host);
   }
 
   @Delete('artist/:id')
   @HttpCode(204)
-  async deleteArtistFromTracks(@Param() params) {
-    return await this.trackService.deleteArtistFromTracks(params.id);
+  async deleteArtistFromTracks(@Param('id') id: string) {
+    return await this.trackService.deleteArtistFromTracks(id);
   }
 
   @Delete('album/:id')
   @HttpCode(204)
-  async deleteAlbumFromTracks(@Param() params) {
-    return await this.trackService.deleteAlbumFromTracks(params.id);
+  async deleteAlbumFromTracks(@Param('id') id: string) {
+    return await this.trackService.deleteAlbumFromTracks(id);
   }
 }

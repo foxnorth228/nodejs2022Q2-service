@@ -4,25 +4,11 @@ import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaServic
 import { CreateTrackDto } from '../dto/create-track.dto';
 
 export class TrackPrismaService extends TemplatePrismaService<ITrack> {
-  constructor() {
-    super();
-  }
-  private prismaService: PrismaService = new PrismaService();
-  async findOne(id: string): Promise<ITrack | null> {
-    const track = await this.prismaService.track.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    return track;
-  }
 
-  async findAll() {
-    return await this.prismaService.track.findMany({});
-  }
+  private prismaService: PrismaService = new PrismaService();
 
   async create(track: ITrack): Promise<ITrack> {
-    const createdTrack = await this.prismaService.track.create({
+    const createdTrack: ITrack = await this.prismaService.track.create({
       data: {
         id: track.id,
         name: track.name,
@@ -34,8 +20,21 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
     return createdTrack;
   }
 
+  async findAll(): Promise<ITrack[]> {
+    return await this.prismaService.track.findMany({});
+  }
+
+  async findOne(id: string): Promise<ITrack | null> {
+    const track: ITrack = await this.prismaService.track.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return track;
+  }
+
   async update(id: string, track: CreateTrackDto): Promise<ITrack> {
-    const updatedTrack = await this.prismaService.track.update({
+    const updatedTrack: ITrack = await this.prismaService.track.update({
       where: {
         id: id,
       },
@@ -57,16 +56,18 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
     });
   }
 
-  async deleteArtistFromTracks(id: string) {
-    const tracks = await this.findAll();
-    let count = 0;
+  async deleteArtistFromTracks(id: string): Promise<string> {
+    const tracks: ITrack[] = await this.findAll();
+    let count: number = 0;
     for (const track of tracks) {
       if (track.artistId === id) {
-        await this.update(track.id, {
-          name: track.name,
-          duration: track.duration,
-          artistId: null,
-          albumId: track.albumId,
+        await this.prismaService.track.update({
+          where: {
+            id: track.id,
+          },
+          data: {
+            artistId: null,
+          }
         });
         count++;
       }
@@ -74,16 +75,18 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
     return `${count} tracks was changed, artistId was removed`;
   }
 
-  async deleteAlbumFromTracks(id: string) {
-    const tracks = await this.findAll();
-    let count = 0;
+  async deleteAlbumFromTracks(id: string): Promise<string> {
+    const tracks: ITrack[] = await this.findAll();
+    let count: number = 0;
     for (const track of tracks) {
       if (track.albumId === id) {
-        await this.update(track.id, {
-          name: track.name,
-          duration: track.duration,
-          artistId: track.artistId,
-          albumId: null,
+        await this.prismaService.track.update({
+          where: {
+            id: track.id,
+          },
+          data: {
+            albumId: null,
+          }
         });
         count++;
       }
