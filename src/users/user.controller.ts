@@ -9,7 +9,6 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UserService } from './services/user.service';
-import './dto/create-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -25,8 +24,8 @@ export class UserController {
 
   @Get(':id')
   @HttpCode(200)
-  async findOne(@Param() params) {
-    return await this.userService.findOne(params.id);
+  async findOne(@Param('id') id: string) {
+    return await this.userService.findOne(id);
   }
 
   @Post()
@@ -37,13 +36,13 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(200)
-  async rewrite(@Param() params, @Body() updateUserDto: UpdateUserDto) {
-    return await this.userService.update(params.id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteUser(@Param() params) {
-    await this.userService.delete(params.id);
+  async deleteUser(@Param('id') id: string) {
+    await this.userService.delete(id);
   }
 }

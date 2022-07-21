@@ -3,10 +3,8 @@ import { PrismaService } from '../../prisma/prisma';
 import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
 
 export class UserPrismaService extends TemplatePrismaService<IUser> {
-  constructor() {
-    super();
-  }
   private prismaService: PrismaService = new PrismaService();
+  
   async create(user: IUser): Promise<IUser> {
     const createdUser = await this.prismaService.user.create({
       data: {
