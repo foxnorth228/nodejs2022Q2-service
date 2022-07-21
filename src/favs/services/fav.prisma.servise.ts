@@ -1,21 +1,23 @@
-import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma';
 import { IArtist } from '../../artists/interfaces/artist.interface';
 import { IAlbum } from '../../albums/interfaces/album.interface';
 import { ITrack } from '../../tracks/interfaces/track.interface';
-import { IFavBody } from '../interfaces/fav-body.interface';
 import { IFav } from '../interfaces/fav.interface';
 import { v4 } from 'uuid';
 
+type IElement = IAlbum | IArtist | ITrack | null;
+
 export class FavPrismaService {
+
   constructor() {
     this.createFav();
   }
+
   public id: string = v4();
   private prismaService: PrismaService = new PrismaService();
 
-  async createFav() {
-    const body = await this.prismaService.fav.create({
+  async createFav(): Promise<void> {
+    await this.prismaService.fav.create({
       data: {
         id: this.id,
         artists: [],
@@ -25,7 +27,7 @@ export class FavPrismaService {
     });
   }
 
-  async getFavs(id: string) {
+  async getFavs(id: string): Promise<IFav> {
     return await this.prismaService.fav.findUnique({
       where: {
         id: id,
@@ -33,19 +35,53 @@ export class FavPrismaService {
     });
   }
 
-  async getArtist(id: string): Promise<IArtist | null> {
-    const artist = await this.prismaService.artist.findUnique({
+  async addElement(id: string, type: string): Promise<string[]> {
+    const favs: IFav = await this.getFavs(this.id);
+    type = type + 's';
+    const elements: string[] = favs[type];
+    elements.push(id);
+    return elements;
+  }
+
+  async getElement(id: string, type: string): Promise<IElement> {
+    return await this.prismaService[type].findUnique({
       where: {
         id: id,
       },
     });
-    return artist;
   }
 
-  async addArtist(id: string) {
-    const favs = await this.getFavs(this.id);
-    const artists = favs.artists;
-    artists.push(id);
+  async getElements(type: string): Promise<IElement[]> {
+    return await this.prismaService[type].findMany({});
+  }
+
+  async getElementFromFavs(id: string, type: string): Promise<string | null> {
+    const favs: IFav = await this.getFavs(this.id);
+    type = type + 's';
+    const elements: string[] = favs[type]
+    const elementIndex: number = elements.indexOf(id);
+    return (elementIndex === -1) ? null : id;
+  }
+
+  async removeElement(id: string, type: string): Promise<string[]> {
+    const favs: IFav = await this.getFavs(this.id);
+    type = type + 's';
+    const elements: string[] = favs[type];
+    const elementIndex: number = elements.indexOf(id);
+    elements.splice(elementIndex, 1);
+    return elements;
+  }
+
+  async getArtist(id: string): Promise<IArtist | null> {
+    return await this.getElement(id, "artist") as IArtist;
+  }
+
+  async getArtists(): Promise<IArtist[]> {
+    return await this.getElements("artist") as IArtist[];
+  }
+
+  async addArtist(id: string): Promise<void> {
+    const artists: string[] = await this.addElement(id, "artist");
     await this.prismaService.fav.update({
       where: {
         id: this.id,
@@ -57,21 +93,11 @@ export class FavPrismaService {
   }
 
   async getArtistFromFavs(id: string): Promise<string | null> {
-    const favs = await this.getFavs(this.id);
-    const artists = favs.artists;
-    const artistIndex = artists.indexOf(id);
-    if (artistIndex === -1) {
-      return null;
-    } else {
-      return id;
-    }
+    return await this.getElementFromFavs(id, "artist");
   }
 
-  async removeArtist(id: string) {
-    const favs = await this.getFavs(this.id);
-    const artists = favs.artists;
-    const artistIndex = artists.indexOf(id);
-    artists.splice(artistIndex, 1);
+  async removeArtist(id: string): Promise<void> {
+    const artists: string[] = await this.removeElement(id, "artist");
     await this.prismaService.fav.update({
       where: {
         id: this.id,
@@ -83,18 +109,15 @@ export class FavPrismaService {
   }
 
   async getAlbum(id: string): Promise<IAlbum | null> {
-    const album = await this.prismaService.album.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    return album;
+    return await this.getElement(id, "album") as IAlbum;
   }
 
-  async addAlbum(id: string) {
-    const favs = await this.getFavs(this.id);
-    const albums = favs.albums;
-    albums.push(id);
+  async getAlbums(): Promise<IAlbum[]> {
+    return await this.getElements("album") as IAlbum[];
+  }
+
+  async addAlbum(id: string): Promise<void> {
+    const albums: string[] = await this.addElement(id, "album");
     await this.prismaService.fav.update({
       where: {
         id: this.id,
@@ -106,21 +129,11 @@ export class FavPrismaService {
   }
 
   async getAlbumFromFavs(id: string): Promise<string | null> {
-    const favs = await this.getFavs(this.id);
-    const albums = favs.albums;
-    const albumIndex = albums.indexOf(id);
-    if (albumIndex === -1) {
-      return null;
-    } else {
-      return id;
-    }
+    return await this.getElementFromFavs(id, "album");
   }
 
-  async removeAlbum(id: string) {
-    const favs = await this.getFavs(this.id);
-    const albums = favs.albums;
-    const albumIndex = albums.indexOf(id);
-    albums.splice(albumIndex, 1);
+  async removeAlbum(id: string): Promise<void> {
+    const albums: string[] = await this.removeElement(id, "album");
     await this.prismaService.fav.update({
       where: {
         id: this.id,
@@ -132,18 +145,15 @@ export class FavPrismaService {
   }
 
   async getTrack(id: string): Promise<ITrack | null> {
-    const track = await this.prismaService.track.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    return track;
+    return await this.getElement(id, "track") as ITrack;
   }
 
-  async addTrack(id: string) {
-    const favs = await this.getFavs(this.id);
-    const tracks = favs.tracks;
-    tracks.push(id);
+  async getTracks(): Promise<ITrack[]> {
+    return await this.getElements("track") as ITrack[];
+  }
+
+  async addTrack(id: string): Promise<void> {
+    const tracks: string[] = await this.addElement(id, "track");
     await this.prismaService.fav.update({
       where: {
         id: this.id,
@@ -155,21 +165,11 @@ export class FavPrismaService {
   }
 
   async getTrackFromFavs(id: string): Promise<string | null> {
-    const favs = await this.getFavs(this.id);
-    const tracks = favs.tracks;
-    const trackIndex = tracks.indexOf(id);
-    if (trackIndex === -1) {
-      return null;
-    } else {
-      return id;
-    }
+    return await this.getElementFromFavs(id, "track");
   }
 
-  async removeTrack(id: string) {
-    const favs = await this.getFavs(this.id);
-    const tracks = favs.tracks;
-    const trackIndex = tracks.indexOf(id);
-    tracks.splice(trackIndex, 1);
+  async removeTrack(id: string): Promise<void> {
+    const tracks: string[] = await this.removeElement(id, "track");
     await this.prismaService.fav.update({
       where: {
         id: this.id,

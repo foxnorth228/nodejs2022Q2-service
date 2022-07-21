@@ -34,7 +34,7 @@ export class AlbumService {
     return album;
   }
 
-  async update(id: string, createAlbum: CreateAlbumDto) {
+  async update(id: string, createAlbum: CreateAlbumDto): Promise<IAlbum> {
     ProcessorId.checkValidation(id);
     const album: IAlbum = await this.albumPrismaService.findOne(id);
     checkNotFound(album, `Album with id: "${id}" is not exist`);
@@ -42,7 +42,7 @@ export class AlbumService {
     return updatedAlbum;
   }
 
-  async delete(id: string, host: string) {
+  async delete(id: string, host: string): Promise<void> {
     ProcessorId.checkValidation(id);
     const album: IAlbum = await this.albumPrismaService.findOne(id);
     checkNotFound(album, `Album with id: "${id}" is not exist`);
@@ -51,7 +51,7 @@ export class AlbumService {
     await this.albumPrismaService.delete(id);
   }
 
-  async deleteArtistFromAlbums(id: string) {
+  async deleteArtistFromAlbums(id: string): Promise<string> {
     return await this.albumPrismaService.deleteArtistFromAlbum(id);
   }
 }
