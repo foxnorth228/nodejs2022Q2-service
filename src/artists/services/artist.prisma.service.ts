@@ -4,9 +4,11 @@ import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 
 export class ArtistPrismaService extends TemplatePrismaService<IArtist> {
+
   private prismaService: PrismaService = new PrismaService();
+
   async create(artist: IArtist): Promise<IArtist> {
-    const createdArtist = await this.prismaService.artist.create({
+    const createdArtist: IArtist = await this.prismaService.artist.create({
       data: {
         id: artist.id,
         name: artist.name,
@@ -16,12 +18,12 @@ export class ArtistPrismaService extends TemplatePrismaService<IArtist> {
     return createdArtist;
   }
 
-  async findAll(): Promise<Array<IArtist>> {
+  async findAll(): Promise<IArtist[]> {
     return await this.prismaService.artist.findMany({});
   }
 
   async findOne(id: string): Promise<IArtist | null> {
-    const artist = await this.prismaService.artist.findUnique({
+    const artist: IArtist = await this.prismaService.artist.findUnique({
       where: {
         id: id,
       },
@@ -30,7 +32,7 @@ export class ArtistPrismaService extends TemplatePrismaService<IArtist> {
   }
 
   async update(id: string, artist: CreateArtistDto): Promise<IArtist> {
-    const updatedArtist = this.prismaService.artist.update({
+    const updatedArtist: IArtist = await this.prismaService.artist.update({
       where: {
         id: id,
       },
@@ -42,7 +44,7 @@ export class ArtistPrismaService extends TemplatePrismaService<IArtist> {
     return updatedArtist;
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<void> {
     await this.prismaService.artist.delete({
       where: {
         id: id,
