@@ -4,9 +4,11 @@ import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaServic
 import { CreateAlbumDto } from '../dto/create-album.dto';
 
 export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
+
   private prismaService: PrismaService = new PrismaService();
+
   async create(album: IAlbum): Promise<IAlbum> {
-    const createdAlbum = await this.prismaService.album.create({
+    const createdAlbum: IAlbum = await this.prismaService.album.create({
       data: {
         id: album.id,
         name: album.name,
@@ -18,7 +20,7 @@ export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
   }
 
   async findOne(id: string): Promise<IAlbum | null> {
-    const album = await this.prismaService.album.findUnique({
+    const album: IAlbum = await this.prismaService.album.findUnique({
       where: {
         id: id,
       },
@@ -26,12 +28,12 @@ export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
     return album;
   }
 
-  async findAll(): Promise<Array<IAlbum>> {
+  async findAll(): Promise<IAlbum[]> {
     return await this.prismaService.album.findMany({});
   }
 
   async update(id: string, album: CreateAlbumDto): Promise<IAlbum> {
-    const updatedAlbum = await this.prismaService.album.update({
+    const updatedAlbum: IAlbum = await this.prismaService.album.update({
       where: {
         id: id,
       },
@@ -52,15 +54,18 @@ export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
     });
   }
 
-  async deleteArtistFromAlbum(id: string) {
-    const albums = await this.findAll();
-    let count = 0;
+  async deleteArtistFromAlbum(id: string): Promise<string> {
+    const albums: IAlbum[] = await this.findAll();
+    let count: number = 0;
     for (const album of albums) {
       if (album.artistId === id) {
-        await this.update(album.id, {
-          name: album.name,
-          year: album.year,
-          artistId: null,
+        await this.prismaService.album.update({
+          where: {
+            id: album.id,
+           },
+          data: {
+            artistId: null,
+          }
         });
         count++;
       }
