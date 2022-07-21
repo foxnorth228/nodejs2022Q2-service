@@ -36,7 +36,7 @@ export class TrackController {
 
   @Put(':id')
   @HttpCode(200)
-  update( @Param('id') id: string, @Body() updateArtistDto: CreateTrackDto) {
+  update(@Param('id') id: string, @Body() updateArtistDto: CreateTrackDto) {
     return this.trackService.update(id, updateArtistDto);
   }
 

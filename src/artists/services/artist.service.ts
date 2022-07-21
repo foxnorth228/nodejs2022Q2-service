@@ -8,7 +8,6 @@ import { IArtist } from '../interfaces/artist.interface';
 
 @Injectable()
 export class ArtistService {
-
   private artistPrismaService: ArtistPrismaService = new ArtistPrismaService();
 
   async create(createArtist: CreateArtistDto): Promise<IArtist> {
@@ -18,7 +17,9 @@ export class ArtistService {
       name: createArtist.name,
       grammy: createArtist.grammy,
     };
-    const createdArtist: IArtist = await this.artistPrismaService.create(artist);
+    const createdArtist: IArtist = await this.artistPrismaService.create(
+      artist,
+    );
     return createdArtist;
   }
 
@@ -37,7 +38,10 @@ export class ArtistService {
     ProcessorId.checkValidation(id);
     const artist: IArtist = await this.artistPrismaService.findOne(id);
     checkNotFound(artist, `Artist with id: "${id}" is not exist`);
-    const updatedArtist: IArtist = await this.artistPrismaService.update(id, createArtist);
+    const updatedArtist: IArtist = await this.artistPrismaService.update(
+      id,
+      createArtist,
+    );
     return updatedArtist;
   }
 

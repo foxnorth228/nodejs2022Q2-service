@@ -4,7 +4,6 @@ import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaServic
 import { CreateAlbumDto } from '../dto/create-album.dto';
 
 export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
-
   private prismaService: PrismaService = new PrismaService();
 
   async create(album: IAlbum): Promise<IAlbum> {
@@ -56,16 +55,16 @@ export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
 
   async deleteArtistFromAlbum(id: string): Promise<string> {
     const albums: IAlbum[] = await this.findAll();
-    let count: number = 0;
+    let count = 0;
     for (const album of albums) {
       if (album.artistId === id) {
         await this.prismaService.album.update({
           where: {
             id: album.id,
-           },
+          },
           data: {
             artistId: null,
-          }
+          },
         });
         count++;
       }

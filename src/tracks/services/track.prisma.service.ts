@@ -4,7 +4,6 @@ import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaServic
 import { CreateTrackDto } from '../dto/create-track.dto';
 
 export class TrackPrismaService extends TemplatePrismaService<ITrack> {
-
   private prismaService: PrismaService = new PrismaService();
 
   async create(track: ITrack): Promise<ITrack> {
@@ -58,7 +57,7 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
 
   async deleteArtistFromTracks(id: string): Promise<string> {
     const tracks: ITrack[] = await this.findAll();
-    let count: number = 0;
+    let count = 0;
     for (const track of tracks) {
       if (track.artistId === id) {
         await this.prismaService.track.update({
@@ -67,7 +66,7 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
           },
           data: {
             artistId: null,
-          }
+          },
         });
         count++;
       }
@@ -77,7 +76,7 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
 
   async deleteAlbumFromTracks(id: string): Promise<string> {
     const tracks: ITrack[] = await this.findAll();
-    let count: number = 0;
+    let count = 0;
     for (const track of tracks) {
       if (track.albumId === id) {
         await this.prismaService.track.update({
@@ -86,7 +85,7 @@ export class TrackPrismaService extends TemplatePrismaService<ITrack> {
           },
           data: {
             albumId: null,
-          }
+          },
         });
         count++;
       }

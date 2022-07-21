@@ -10,19 +10,18 @@ import { IFavBody } from '../interfaces/fav-body.interface';
 import { IFav } from '../interfaces/fav.interface';
 import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 import { FavPrismaService } from './fav.prisma.servise';
-import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 
 const checkUnprocEntity = (elem: any, message: string) => {
-  if(!elem) {
+  if (!elem) {
     throw new UnprocessableEntityException(message);
   }
-}
+};
 
 const checkBadRequest = (elem: any, message: string) => {
-  if(!elem) {
+  if (!elem) {
     throw new BadRequestException(message);
   }
-}
+};
 
 @Injectable()
 export class FavService {
@@ -34,7 +33,9 @@ export class FavService {
       albums: [],
       tracks: [],
     };
-    const favs: IFav = await this.favPrismaService.getFavs(this.favPrismaService.id);
+    const favs: IFav = await this.favPrismaService.getFavs(
+      this.favPrismaService.id,
+    );
     const artists: IArtist[] = await this.favPrismaService.getArtists();
     const albums: IAlbum[] = await this.favPrismaService.getAlbums();
     const tracks: ITrack[] = await this.favPrismaService.getTracks();
@@ -63,7 +64,9 @@ export class FavService {
 
   async removeArtist(id: string) {
     ProcessorId.checkValidation(id);
-    const artist: string | null = await this.favPrismaService.getArtistFromFavs(id);
+    const artist: string | null = await this.favPrismaService.getArtistFromFavs(
+      id,
+    );
     checkBadRequest(artist, `Artist with id: "${id}" didn't favourite`);
     await this.favPrismaService.removeArtist(id);
     return `Artist id: "${id}" successfully deleted from favourites`;
@@ -79,7 +82,9 @@ export class FavService {
 
   async removeAlbum(id: string) {
     ProcessorId.checkValidation(id);
-    const album: string | null = await this.favPrismaService.getAlbumFromFavs(id);
+    const album: string | null = await this.favPrismaService.getAlbumFromFavs(
+      id,
+    );
     checkBadRequest(album, `Album with id: "${id}" didn't favourite`);
     await this.favPrismaService.removeAlbum(id);
     return `Album id: "${id}" successfully deleted from favourites`;
@@ -95,7 +100,9 @@ export class FavService {
 
   async removeTrack(id: string) {
     ProcessorId.checkValidation(id);
-    const track: string | null = await this.favPrismaService.getTrackFromFavs(id);
+    const track: string | null = await this.favPrismaService.getTrackFromFavs(
+      id,
+    );
     checkBadRequest(track, `Track with id: "${id}" didn't favourite`);
     await this.favPrismaService.removeTrack(id);
     return `Track id: "${id}" successfully deleted from favourites`;

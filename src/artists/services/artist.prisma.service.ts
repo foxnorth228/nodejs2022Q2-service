@@ -4,7 +4,6 @@ import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 
 export class ArtistPrismaService extends TemplatePrismaService<IArtist> {
-
   private prismaService: PrismaService = new PrismaService();
 
   async create(artist: IArtist): Promise<IArtist> {

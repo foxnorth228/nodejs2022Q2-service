@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  HttpCode,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, HttpCode, Param } from '@nestjs/common';
 import { FavService } from './services/fav.service';
 
 @Controller('favs')

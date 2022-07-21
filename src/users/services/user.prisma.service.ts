@@ -4,7 +4,7 @@ import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaServic
 
 export class UserPrismaService extends TemplatePrismaService<IUser> {
   private prismaService: PrismaService = new PrismaService();
-  
+
   async create(user: IUser): Promise<IUser> {
     const createdUser = await this.prismaService.user.create({
       data: {

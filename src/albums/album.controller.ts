@@ -14,7 +14,6 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 
 @Controller('album')
 export class AlbumController {
-
   private albumServise: AlbumService = new AlbumService();
 
   @Get()
@@ -37,7 +36,10 @@ export class AlbumController {
 
   @Put(':id')
   @HttpCode(200)
-  async update(@Param('id') id: string, @Body() updateArtistDto: CreateAlbumDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateArtistDto: CreateAlbumDto,
+  ) {
     return await this.albumServise.update(id, updateArtistDto);
   }
 

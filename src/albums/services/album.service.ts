@@ -8,7 +8,6 @@ import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 
 @Injectable()
 export class AlbumService {
-
   private albumPrismaService: AlbumPrismaService = new AlbumPrismaService();
 
   async create(createAlbum: CreateAlbumDto): Promise<IAlbum> {
@@ -38,7 +37,10 @@ export class AlbumService {
     ProcessorId.checkValidation(id);
     const album: IAlbum = await this.albumPrismaService.findOne(id);
     checkNotFound(album, `Album with id: "${id}" is not exist`);
-    const updatedAlbum: IAlbum = await this.albumPrismaService.update(id, createAlbum);
+    const updatedAlbum: IAlbum = await this.albumPrismaService.update(
+      id,
+      createAlbum,
+    );
     return updatedAlbum;
   }
 

@@ -18,7 +18,7 @@ export class TrackService {
       duration: createTrack.duration,
       artistId: createTrack.artistId,
       albumId: createTrack.albumId,
-    }
+    };
     const createdTrack: ITrack = await this.trackPrismaService.create(track);
     return createdTrack;
   }
@@ -38,7 +38,10 @@ export class TrackService {
     ProcessorId.checkValidation(id);
     const track: ITrack = await this.trackPrismaService.findOne(id);
     checkNotFound(track, `Track with id: "${id}" is not exist`);
-    const updatedTrack: ITrack = await this.trackPrismaService.update(id, createtrack);
+    const updatedTrack: ITrack = await this.trackPrismaService.update(
+      id,
+      createtrack,
+    );
     return updatedTrack;
   }
 

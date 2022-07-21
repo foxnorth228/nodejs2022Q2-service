@@ -1,7 +1,7 @@
-import { NotFoundException } from "@nestjs/common";
+import { NotFoundException } from '@nestjs/common';
 
 export const checkNotFound = (existence: any, message: string) => {
-    if(!existence) {
-        throw new NotFoundException(message);
-    }
-}
+  if (!existence) {
+    throw new NotFoundException(message);
+  }
+};
