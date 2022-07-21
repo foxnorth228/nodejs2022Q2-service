@@ -1,6 +1,6 @@
 import { ITrack } from '../interfaces/track.interface';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma';
+import { PrismaService } from '../../prisma/prisma';
 import { elementPrismaService } from '../../abstractClass';
 import { CreateTrackDto } from '../dto/create-track.dto';
 

@@ -1,6 +1,6 @@
 import { IAlbum } from '../interfaces/album.interface';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma';
+import { PrismaService } from '../../prisma/prisma';
 import { elementPrismaService } from '../../abstractClass';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 
