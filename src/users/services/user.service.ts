@@ -1,28 +1,19 @@
 import {
   Injectable,
-  BadRequestException,
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { v4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { validate } from 'uuid';
 import { UserPrismaService } from './user.prisma.service';
-import { createId } from '../../createId';
-
-const checkValidation = (id: string) => {
-  if (!validate(id)) {
-    throw new BadRequestException(`This id: "${id}" is not valid`);
-  }
-};
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 
 @Injectable()
 export class UserService {
-  constructor(private userPrismaService: UserPrismaService) {}
+  private userPrismaService: UserPrismaService = new UserPrismaService();
 
   async create(user: CreateUserDto) {
-    const id = await createId(this.userPrismaService, 'findOne');
+    const id = await ProcessorId.createId(this.userPrismaService);
     const newUser = Object.assign(
       {
         id: id,
@@ -39,7 +30,7 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const user = await this.userPrismaService.findOne(id);
     if (!user) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
@@ -52,7 +43,7 @@ export class UserService {
   }
 
   async update(id: string, user: UpdateUserDto) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const oldUser = await this.userPrismaService.findOne(id);
     if (!oldUser) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);
@@ -70,7 +61,7 @@ export class UserService {
   }
 
   async delete(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const user = await this.userPrismaService.findOne(id);
     if (!user) {
       throw new NotFoundException(`User with id: "${id}" is not exist`);

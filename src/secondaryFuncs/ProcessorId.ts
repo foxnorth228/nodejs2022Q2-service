@@ -5,7 +5,7 @@ type FindOneObj = {
   findOne: (id: string) => any;
 };
 
-export class processorId {
+export class ProcessorId {
   static checkValidation(id: string) {
     if (!validate(id)) {
       throw new BadRequestException(`This id: "${id}" is not valid`);

@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from '../dto/create-artist.dto';
-import { sendRequest } from 'src/sendRequest';
+import { sendRequest } from '../../secondaryFuncs/sendRequest';
 import { ArtistPrismaService } from './artist.prisma.service';
-import { checkValidation } from '../../checkValidation';
-import { createId } from '../../createId';
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 
 @Injectable()
 export class ArtistService {
@@ -14,7 +13,7 @@ export class ArtistService {
   }
 
   async findOne(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.artistPrismaService.findOne(id);
     if (!artist) {
       throw new NotFoundException(`Artist with id: "${id}" is not exist`);
@@ -23,14 +22,14 @@ export class ArtistService {
   }
 
   async create(createArtist: CreateArtistDto) {
-    const id = await createId(this.artistPrismaService, 'findOne');
+    const id = await ProcessorId.createId(this.artistPrismaService);
     const artist = Object.assign({ id: id }, createArtist);
     const createdArtist = await this.artistPrismaService.create(artist);
     return createdArtist;
   }
 
   async update(id: string, createArtist: CreateArtistDto) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.artistPrismaService.findOne(id);
     if (!artist) {
       throw new NotFoundException(`Artist with id: "${id}" is not exist`);
@@ -43,7 +42,7 @@ export class ArtistService {
   }
 
   async delete(id: string, host: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.artistPrismaService.findOne(id);
     if (!artist) {
       throw new NotFoundException(`Artist with id: "${id}" is not exist`);

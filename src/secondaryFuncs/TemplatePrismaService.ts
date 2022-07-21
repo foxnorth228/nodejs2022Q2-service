@@ -1,4 +1,4 @@
-export abstract class elementPrismaService<T> {
+export abstract class TemplatePrismaService<T> {
   abstract findOne(id: string): Promise<T | null>;
   abstract findAll(): Promise<Array<T>>;
   abstract create(elem: T): Promise<T>;

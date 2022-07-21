@@ -1,11 +1,11 @@
 import { ITrack } from '../interfaces/track.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma';
-import { elementPrismaService } from '../../abstractClass';
+import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
 import { CreateTrackDto } from '../dto/create-track.dto';
 
 @Injectable()
-export class TrackPrismaService extends elementPrismaService<ITrack> {
+export class TrackPrismaService extends TemplatePrismaService<ITrack> {
   constructor(private prismaService: PrismaService) {
     super();
   }

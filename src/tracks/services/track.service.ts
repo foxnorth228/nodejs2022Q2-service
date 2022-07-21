@@ -1,20 +1,12 @@
 import {
   Injectable,
-  BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
 import { ITrack } from '../interfaces/track.interface';
 import { CreateTrackDto } from '../dto/create-track.dto';
-import { validate, v4 } from 'uuid';
-import { sendRequest } from 'src/sendRequest';
+import { sendRequest } from '../../secondaryFuncs/sendRequest';
 import { TrackPrismaService } from './track.prisma.service';
-import { createId } from '../../createId';
-
-const checkValidation = (id) => {
-  if (!validate(id)) {
-    throw new BadRequestException(`This id: "${id}" is not valid`);
-  }
-};
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 
 @Injectable()
 export class TrackService {
@@ -26,7 +18,7 @@ export class TrackService {
   }
 
   async findOne(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const track = await this.trackPrismaService.findOne(id);
     if (!track) {
       throw new NotFoundException(`Track with id: "${id}" is not exist`);
@@ -35,14 +27,14 @@ export class TrackService {
   }
 
   async create(createtrack: CreateTrackDto) {
-    const id = await createId(this.trackPrismaService, 'findOne');
+    const id = await ProcessorId.createId(this.trackPrismaService);
     const track = Object.assign({ id: id }, createtrack);
     const createdTrack = await this.trackPrismaService.create(track);
     return createdTrack;
   }
 
   async update(id: string, createtrack: CreateTrackDto) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const track = await this.trackPrismaService.findOne(id);
     if (!track) {
       throw new NotFoundException(`track with id: "${id}" is not exist`);
@@ -52,7 +44,7 @@ export class TrackService {
   }
 
   async delete(id: string, host) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const track = await this.trackPrismaService.findOne(id);
     if (!track) {
       throw new NotFoundException(`track with id: "${id}" is not exist`);

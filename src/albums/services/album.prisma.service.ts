@@ -1,11 +1,11 @@
 import { IAlbum } from '../interfaces/album.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma';
-import { elementPrismaService } from '../../abstractClass';
+import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 
 @Injectable()
-export class AlbumPrismaService extends elementPrismaService<IAlbum> {
+export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {
   constructor(private prismaService: PrismaService) {
     super();
   }

@@ -2,10 +2,9 @@ import { IAlbum } from '../interfaces/album.interface';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { v4 } from 'uuid';
-import { sendRequest } from 'src/sendRequest';
-import { checkValidation } from 'src/checkValidation';
+import { sendRequest } from '../../secondaryFuncs/sendRequest';
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 import { AlbumPrismaService } from './album.prisma.service';
-import { createId } from '../../createId';
 
 @Injectable()
 export class AlbumService {
@@ -17,7 +16,7 @@ export class AlbumService {
   }
 
   async findOne(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const album = await this.albumPrismaService.findOne(id);
     if (!album) {
       throw new NotFoundException(`album with id: "${id}" is not exist`);
@@ -26,14 +25,14 @@ export class AlbumService {
   }
 
   async create(createalbum: CreateAlbumDto) {
-    const id = await createId(this.albumPrismaService, 'findOne');
+    const id = await ProcessorId.createId(this.albumPrismaService);
     const album = Object.assign({ id: id }, createalbum);
     const createdAlbum = await this.albumPrismaService.create(album);
     return createdAlbum;
   }
 
   async update(id: string, createAlbum: CreateAlbumDto) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const album = await this.albumPrismaService.findOne(id);
     if (!album) {
       throw new NotFoundException(`album with id: "${id}" is not exist`);
@@ -43,7 +42,7 @@ export class AlbumService {
   }
 
   async delete(id: string, host: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const album = await this.albumPrismaService.findOne(id);
     if (!album) {
       throw new NotFoundException(`album with id: "${id}" is not exist`);

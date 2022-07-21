@@ -1,13 +1,12 @@
 import { IUser } from '../interfaces/user.interface';
-import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma';
-import { elementPrismaService } from '../../abstractClass';
+import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
 
-@Injectable()
-export class UserPrismaService extends elementPrismaService<IUser> {
-  constructor(private prismaService: PrismaService) {
+export class UserPrismaService extends TemplatePrismaService<IUser> {
+  constructor() {
     super();
   }
+  private prismaService: PrismaService = new PrismaService();
   async create(user: IUser): Promise<IUser> {
     const createdUser = await this.prismaService.user.create({
       data: {

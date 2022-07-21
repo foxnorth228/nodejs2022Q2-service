@@ -8,21 +8,15 @@ import { IAlbum } from '../../albums/interfaces/album.interface';
 import { ITrack } from '../../tracks/interfaces/track.interface';
 import { IFavBody } from '../interfaces/fav-body.interface';
 import { IFav } from '../interfaces/fav.interface';
-import { sendRequest } from '../../sendRequest';
-import { checkValidation } from 'src/checkValidation';
+import { sendRequest } from '../../secondaryFuncs/sendRequest';
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
 import { FavPrismaService } from './fav.prisma.servise';
-
-interface IAnswer {
-  statusCode: number;
-  message: string;
-  error: string;
-}
 
 @Injectable()
 export class FavService {
   private favPrismaService: FavPrismaService = new FavPrismaService();
 
-  async getAllFavs(host: string) {
+  async getAllFavs() {
     const favBody: IFavBody = {
       artists: [],
       albums: [],
@@ -45,7 +39,7 @@ export class FavService {
   }
 
   async addArtist(id: string, host: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.favPrismaService.getArtist(id);
     if (!artist) {
       throw new UnprocessableEntityException(
@@ -57,7 +51,7 @@ export class FavService {
   }
 
   async removeArtist(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.favPrismaService.getArtistFromFavs(id);
     if (!artist) {
       throw new BadRequestException(`Artist with id: "${id}" didn't favourite`);
@@ -67,7 +61,7 @@ export class FavService {
   }
 
   async addAlbum(id: string, host: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.favPrismaService.getAlbum(id);
     if (!artist) {
       throw new UnprocessableEntityException(
@@ -79,7 +73,7 @@ export class FavService {
   }
 
   async removeAlbum(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.favPrismaService.getAlbumFromFavs(id);
     if (!artist) {
       throw new BadRequestException(`Artist with id: "${id}" didn't favourite`);
@@ -89,7 +83,7 @@ export class FavService {
   }
 
   async addTrack(id: string, host: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.favPrismaService.getTrack(id);
     if (!artist) {
       throw new UnprocessableEntityException(
@@ -101,7 +95,7 @@ export class FavService {
   }
 
   async removeTrack(id: string) {
-    checkValidation(id);
+    ProcessorId.checkValidation(id);
     const artist = await this.favPrismaService.getTrackFromFavs(id);
     if (!artist) {
       throw new BadRequestException(`Artist with id: "${id}" didn't favourite`);

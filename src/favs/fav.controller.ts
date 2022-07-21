@@ -16,7 +16,7 @@ export class FavController {
   @Get()
   @HttpCode(200)
   async findAll(@Headers() header) {
-    return await this.favService.getAllFavs(header.host);
+    return await this.favService.getAllFavs();
   }
 
   @Post('artist/:id')
