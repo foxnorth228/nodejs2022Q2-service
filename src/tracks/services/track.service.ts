@@ -1,85 +1,63 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ITrack } from '../interfaces/track.interface';
 import { CreateTrackDto } from '../dto/create-track.dto';
-import { validate, v4 } from 'uuid';
-import { sendRequest } from 'src/sendRequest';
-
-const checkValidation = (id) => {
-  if (!validate(id)) {
-    throw new BadRequestException(`This id: "${id}" is not valid`);
-  }
-};
+import { sendRequest } from '../../secondaryFuncs/sendRequest';
+import { TrackPrismaService } from './track.prisma.service';
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 
 @Injectable()
 export class TrackService {
-  private readonly tracks: ITrack[] = [];
+  private trackPrismaService: TrackPrismaService = new TrackPrismaService();
 
-  findAll() {
-    return this.tracks;
+  async create(createTrack: CreateTrackDto): Promise<ITrack> {
+    const id: string = await ProcessorId.createId(this.trackPrismaService);
+    const track: ITrack = {
+      id: id,
+      name: createTrack.name,
+      duration: createTrack.duration,
+      artistId: createTrack.artistId,
+      albumId: createTrack.albumId,
+    };
+    const createdTrack: ITrack = await this.trackPrismaService.create(track);
+    return createdTrack;
   }
 
-  findOne(id: string) {
-    checkValidation(id);
-    const track = this.tracks.find((el) => el.id === id);
-    if (track) {
-      return track;
-    } else {
-      throw new NotFoundException(`track with id: "${id}" is not exist`);
-    }
+  async findAll(): Promise<ITrack[]> {
+    return await this.trackPrismaService.findAll();
   }
 
-  create(createtrack: CreateTrackDto) {
-    const track = Object.assign({ id: v4() }, createtrack);
-    this.tracks.push(track);
+  async findOne(id: string): Promise<ITrack> {
+    ProcessorId.checkValidation(id);
+    const track: ITrack = await this.trackPrismaService.findOne(id);
+    checkNotFound(track, `Track with id: "${id}" is not exist`);
     return track;
   }
 
-  update(id: string, createtrack: CreateTrackDto) {
-    checkValidation(id);
-    const track = this.tracks.find((el) => el.id === id);
-    if (!track) {
-      throw new NotFoundException(`track with id: "${id}" is not exist`);
-    }
-    track.name = createtrack.name;
-    track.duration = createtrack.duration;
-    track.artistId = createtrack.artistId;
-    track.albumId = track.albumId;
-    return track;
+  async update(id: string, createtrack: CreateTrackDto): Promise<ITrack> {
+    ProcessorId.checkValidation(id);
+    const track: ITrack = await this.trackPrismaService.findOne(id);
+    checkNotFound(track, `Track with id: "${id}" is not exist`);
+    const updatedTrack: ITrack = await this.trackPrismaService.update(
+      id,
+      createtrack,
+    );
+    return updatedTrack;
   }
 
-  async delete(id: string, host) {
-    checkValidation(id);
-    const trackIndex = this.tracks.findIndex((el) => el.id === id);
-    if (trackIndex === -1) {
-      throw new NotFoundException(`track with id: "${id}" is not exist`);
-    }
+  async delete(id: string, host): Promise<void> {
+    ProcessorId.checkValidation(id);
+    const track: ITrack = await this.trackPrismaService.findOne(id);
+    checkNotFound(track, `Track with id: "${id}" is not exist`);
     await sendRequest(`http://${host}/favs/track/${id}`, 'DELETE');
-    this.tracks.splice(trackIndex, 1);
+    await this.trackPrismaService.delete(id);
   }
 
-  deleteArtistFromTracks(id: string) {
-    let count = 0;
-    for (const track of this.tracks) {
-      if (track.artistId === id) {
-        track.artistId = null;
-        count++;
-      }
-    }
-    return `${count} tracks was changed, artistId was removed`;
+  async deleteArtistFromTracks(id: string): Promise<string> {
+    return await this.trackPrismaService.deleteArtistFromTracks(id);
   }
 
-  deleteAlbumFromTracks(id: string) {
-    let count = 0;
-    for (const track of this.tracks) {
-      if (track.albumId === id) {
-        track.albumId = null;
-        count++;
-      }
-    }
-    return `${count} tracks was changed, albumId was removed`;
+  async deleteAlbumFromTracks(id: string): Promise<string> {
+    return await this.trackPrismaService.deleteAlbumFromTracks(id);
   }
 }

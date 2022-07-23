@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String @id
+  login     String
+  password  String
+  version   Int
+  createdAt Int
+  updatedAt Int
+}
+
+model Album {
+  id       String  @id
+  name     String
+  year     Int
+  artistId String?
+}
+
+model Artist {
+  id     String  @id
+  name   String
+  grammy Boolean
+}
+
+model Track {
+  id       String  @id
+  albumId  String?
+  artistId String?
+  duration Int
+  name     String
+}
+
+model Fav {
+  id      String   @id
+  artists String[]
+  albums  String[]
+  tracks  String[]
+}

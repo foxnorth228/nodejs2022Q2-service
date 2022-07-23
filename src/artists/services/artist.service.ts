@@ -1,63 +1,57 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
-import { IArtist } from '../interfaces/artist.interface';
+import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from '../dto/create-artist.dto';
-import { validate, v4 } from 'uuid';
-import { sendRequest } from 'src/sendRequest';
-
-const checkValidation = (id) => {
-  if (!validate(id)) {
-    throw new BadRequestException(`This id: "${id}" is not valid`);
-  }
-};
+import { sendRequest } from '../../secondaryFuncs/sendRequest';
+import { ArtistPrismaService } from './artist.prisma.service';
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
+import { IArtist } from '../interfaces/artist.interface';
 
 @Injectable()
 export class ArtistService {
-  private readonly artists: IArtist[] = [];
+  private artistPrismaService: ArtistPrismaService = new ArtistPrismaService();
 
-  findAll() {
-    return this.artists;
+  async create(createArtist: CreateArtistDto): Promise<IArtist> {
+    const id: string = await ProcessorId.createId(this.artistPrismaService);
+    const artist: IArtist = {
+      id: id,
+      name: createArtist.name,
+      grammy: createArtist.grammy,
+    };
+    const createdArtist: IArtist = await this.artistPrismaService.create(
+      artist,
+    );
+    return createdArtist;
   }
 
-  findOne(id: string) {
-    checkValidation(id);
-    const artist = this.artists.find((el) => el.id === id);
-    if (artist) {
-      return artist;
-    } else {
-      throw new NotFoundException(`Artist with id: "${id}" is not exist`);
-    }
+  async findAll(): Promise<IArtist[]> {
+    return await this.artistPrismaService.findAll();
   }
 
-  create(createArtist: CreateArtistDto) {
-    const artist = Object.assign({ id: v4() }, createArtist);
-    this.artists.push(artist);
+  async findOne(id: string): Promise<IArtist> {
+    ProcessorId.checkValidation(id);
+    const artist: IArtist = await this.artistPrismaService.findOne(id);
+    checkNotFound(artist, `Artist with id: "${id}" is not exist`);
     return artist;
   }
 
-  update(id: string, createArtist: CreateArtistDto) {
-    checkValidation(id);
-    const artist = this.artists.find((el) => el.id === id);
-    if (!artist) {
-      throw new NotFoundException(`Artist with id: "${id}" is not exist`);
-    }
-    artist.name = createArtist.name;
-    artist.grammy = createArtist.grammy;
-    return artist;
+  async update(id: string, createArtist: CreateArtistDto): Promise<IArtist> {
+    ProcessorId.checkValidation(id);
+    const artist: IArtist = await this.artistPrismaService.findOne(id);
+    checkNotFound(artist, `Artist with id: "${id}" is not exist`);
+    const updatedArtist: IArtist = await this.artistPrismaService.update(
+      id,
+      createArtist,
+    );
+    return updatedArtist;
   }
 
-  async delete(id: string, host: string) {
-    checkValidation(id);
-    const artistIndex = this.artists.findIndex((el) => el.id === id);
-    if (artistIndex === -1) {
-      throw new NotFoundException(`Artist with id: "${id}" is not exist`);
-    }
+  async delete(id: string, host: string): Promise<void> {
+    ProcessorId.checkValidation(id);
+    const artist: IArtist = await this.artistPrismaService.findOne(id);
+    checkNotFound(artist, `Artist with id: "${id}" is not exist`);
     await sendRequest(`http://${host}/favs/artist/${id}`, 'DELETE');
     await sendRequest(`http://${host}/album/artist/${id}`, 'DELETE');
     await sendRequest(`http://${host}/track/artist/${id}`, 'DELETE');
-    this.artists.splice(artistIndex, 1);
+    await this.artistPrismaService.delete(id);
   }
 }

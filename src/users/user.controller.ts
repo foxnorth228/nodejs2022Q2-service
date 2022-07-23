@@ -9,7 +9,6 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UserService } from './services/user.service';
-import './dto/create-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -19,31 +18,31 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
   @HttpCode(200)
-  findOne(@Param() params) {
-    return this.userService.findOne(params.id);
+  async findOne(@Param('id') id: string) {
+    return await this.userService.findOne(id);
   }
 
   @Post()
   @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Put(':id')
   @HttpCode(200)
-  async rewrite(@Param() params, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(params.id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  deleteUser(@Param() params) {
-    this.userService.delete(params.id);
+  async deleteUser(@Param('id') id: string) {
+    await this.userService.delete(id);
   }
 }

@@ -8,128 +8,103 @@ import { IAlbum } from '../../albums/interfaces/album.interface';
 import { ITrack } from '../../tracks/interfaces/track.interface';
 import { IFavBody } from '../interfaces/fav-body.interface';
 import { IFav } from '../interfaces/fav.interface';
-import { sendRequest } from '../../sendRequest';
-import { validate } from 'uuid';
+import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { FavPrismaService } from './fav.prisma.servise';
 
-const checkValidation = (id) => {
-  if (!validate(id)) {
-    throw new BadRequestException(`This id: "${id}" is not valid`);
+const checkUnprocEntity = (elem: any, message: string) => {
+  if (!elem) {
+    throw new UnprocessableEntityException(message);
   }
 };
 
-interface IAnswer {
-  statusCode: number;
-  message: string;
-  error: string;
-}
+const checkBadRequest = (elem: any, message: string) => {
+  if (!elem) {
+    throw new BadRequestException(message);
+  }
+};
 
 @Injectable()
 export class FavService {
-  private readonly favs: Map<string, IFav> = new Map();
-  private readonly fav: IFav = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
+  private favPrismaService: FavPrismaService = new FavPrismaService();
 
-  async getAllFavs(host: string) {
+  async getAllFavs() {
     const favBody: IFavBody = {
       artists: [],
       albums: [],
       tracks: [],
     };
-    for (const id of this.fav.artists) {
-      const answer = (await sendRequest(
-        `http://${host}/artist/${id}`,
-      )) as IArtist;
+    const favs: IFav = await this.favPrismaService.getFavs(
+      this.favPrismaService.id,
+    );
+    const artists: IArtist[] = await this.favPrismaService.getArtists();
+    const albums: IAlbum[] = await this.favPrismaService.getAlbums();
+    const tracks: ITrack[] = await this.favPrismaService.getTracks();
+    for (const id of favs.artists) {
+      const answer: IArtist = artists.find((el) => el.id === id);
       favBody.artists.push(answer);
     }
-    for (const id of this.fav.albums) {
-      const answer = (await sendRequest(
-        `http://${host}/album/${id}`,
-      )) as IAlbum;
+    for (const id of favs.albums) {
+      const answer: IAlbum = albums.find((el) => el.id === id);
       favBody.albums.push(answer);
     }
-    for (const id of this.fav.tracks) {
-      const answer = (await sendRequest(
-        `http://${host}/track/${id}`,
-      )) as ITrack;
+    for (const id of favs.tracks) {
+      const answer: ITrack = tracks.find((el) => el.id === id);
       favBody.tracks.push(answer);
     }
     return favBody;
   }
 
-  async addArtist(id: string, host: string) {
-    checkValidation(id);
-    const answer = (await sendRequest(
-      `http://${host}/artist/${id}`,
-    )) as IAnswer;
-    if ('statusCode' in answer) {
-      throw new UnprocessableEntityException(
-        `Artist with id: "${id}" didn't exist`,
-      );
-    } else {
-      this.fav.artists.push(id);
-      return `Artist id: "${id}" successfully added to favourites`;
-    }
+  async addArtist(id: string) {
+    ProcessorId.checkValidation(id);
+    const artist: IArtist = await this.favPrismaService.getArtist(id);
+    checkUnprocEntity(artist, `Artist with id: "${id}" didn't exist`);
+    await this.favPrismaService.addArtist(id);
+    return `Artist id: "${id}" successfully added to favourites`;
   }
 
   async removeArtist(id: string) {
-    checkValidation(id);
-    const artistIndex = this.fav.artists.indexOf(id);
-    if (artistIndex === -1) {
-      throw new BadRequestException(`Artist with id: "${id}" didn't favourite`);
-    } else {
-      this.fav.artists.splice(artistIndex, 1);
-      return `Artist id: "${id}" successfully deleted from favourites`;
-    }
+    ProcessorId.checkValidation(id);
+    const artist: string | null = await this.favPrismaService.getArtistFromFavs(
+      id,
+    );
+    checkBadRequest(artist, `Artist with id: "${id}" didn't favourite`);
+    await this.favPrismaService.removeArtist(id);
+    return `Artist id: "${id}" successfully deleted from favourites`;
   }
 
-  async addAlbum(id: string, host: string) {
-    checkValidation(id);
-    const answer = (await sendRequest(`http://${host}/album/${id}`)) as IAnswer;
-    if ('statusCode' in answer) {
-      throw new UnprocessableEntityException(
-        `Artist with id: "${id}" didn't exist`,
-      );
-    } else {
-      this.fav.albums.push(id);
-      return `Album id: "${id}" successfully added to favourites`;
-    }
+  async addAlbum(id: string) {
+    ProcessorId.checkValidation(id);
+    const album: IAlbum = await this.favPrismaService.getAlbum(id);
+    checkUnprocEntity(album, `Album with id: "${id}" didn't exist`);
+    await this.favPrismaService.addAlbum(id);
+    return `Album id: "${id}" successfully added to favourites`;
   }
 
   async removeAlbum(id: string) {
-    checkValidation(id);
-    const albumIndex = this.fav.albums.indexOf(id);
-    if (albumIndex === -1) {
-      throw new BadRequestException(`Artist with id: "${id}" didn't favourite`);
-    } else {
-      this.fav.albums.splice(albumIndex, 1);
-      return `Album id: "${id}" successfully deleted from favourites`;
-    }
+    ProcessorId.checkValidation(id);
+    const album: string | null = await this.favPrismaService.getAlbumFromFavs(
+      id,
+    );
+    checkBadRequest(album, `Album with id: "${id}" didn't favourite`);
+    await this.favPrismaService.removeAlbum(id);
+    return `Album id: "${id}" successfully deleted from favourites`;
   }
 
-  async addTrack(id: string, host: string) {
-    checkValidation(id);
-    const answer = (await sendRequest(`http://${host}/track/${id}`)) as IAnswer;
-    if ('statusCode' in answer) {
-      throw new UnprocessableEntityException(
-        `Artist with id: "${id}" didn't exist`,
-      );
-    } else {
-      this.fav.tracks.push(id);
-      return `Track id: "${id}" added deleted to favourites`;
-    }
+  async addTrack(id: string) {
+    ProcessorId.checkValidation(id);
+    const track: ITrack = await this.favPrismaService.getTrack(id);
+    checkUnprocEntity(track, `Track with id: "${id}" didn't exist`);
+    await this.favPrismaService.addTrack(id);
+    return `Track id: "${id}" successfully added to favourites`;
   }
 
   async removeTrack(id: string) {
-    checkValidation(id);
-    const trackIndex = this.fav.tracks.indexOf(id);
-    if (trackIndex === -1) {
-      throw new BadRequestException(`Artist with id: "${id}" didn't favourite`);
-    } else {
-      this.fav.tracks.splice(trackIndex, 1);
-      return `Track id: "${id}" successfully deleted from favourites`;
-    }
+    ProcessorId.checkValidation(id);
+    const track: string | null = await this.favPrismaService.getTrackFromFavs(
+      id,
+    );
+    checkBadRequest(track, `Track with id: "${id}" didn't favourite`);
+    await this.favPrismaService.removeTrack(id);
+    return `Track id: "${id}" successfully deleted from favourites`;
   }
 }

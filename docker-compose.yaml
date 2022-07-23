@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: always
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+    - docker.env
+    # Run a command against the development stage of the image
+    #command: npm run start:dev
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    env_file:
+      - docker.env
+    ports:
+      - '5432:5432'
+    volumes:
+      - docker-nest-postgres:/var/lib/postgresql/data
+
+volumes:
+  docker-nest-postgres:

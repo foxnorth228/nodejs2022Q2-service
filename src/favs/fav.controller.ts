@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  HttpCode,
-  Param,
-  Headers,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, HttpCode, Param } from '@nestjs/common';
 import { FavService } from './services/fav.service';
 
 @Controller('favs')
@@ -15,43 +7,43 @@ export class FavController {
 
   @Get()
   @HttpCode(200)
-  async findAll(@Headers() header) {
-    return await this.favService.getAllFavs(header.host);
+  async findAll() {
+    return await this.favService.getAllFavs();
   }
 
   @Post('artist/:id')
   @HttpCode(201)
-  async addArtist(@Param() params, @Headers() header) {
-    return await this.favService.addArtist(params.id, header.host);
+  async addArtist(@Param('id') id: string) {
+    return await this.favService.addArtist(id);
   }
 
   @Delete('artist/:id')
   @HttpCode(204)
-  async removeArtist(@Param() params) {
-    return await this.favService.removeArtist(params.id);
+  async removeArtist(@Param('id') id: string) {
+    return await this.favService.removeArtist(id);
   }
 
   @Post('album/:id')
   @HttpCode(201)
-  async addAlbum(@Param() params, @Headers() header) {
-    return await this.favService.addAlbum(params.id, header.host);
+  async addAlbum(@Param('id') id: string) {
+    return await this.favService.addAlbum(id);
   }
 
   @Delete('album/:id')
   @HttpCode(204)
-  async removeAlbum(@Param() params) {
-    return await this.favService.removeAlbum(params.id);
+  async removeAlbum(@Param('id') id: string) {
+    return await this.favService.removeAlbum(id);
   }
 
   @Post('track/:id')
   @HttpCode(201)
-  async addTrack(@Param() params, @Headers() header) {
-    return await this.favService.addTrack(params.id, header.host);
+  async addTrack(@Param('id') id: string) {
+    return await this.favService.addTrack(id);
   }
 
   @Delete('track/:id')
   @HttpCode(204)
-  async removeTrack(@Param() params) {
-    return await this.favService.removeTrack(params.id);
+  async removeTrack(@Param('id') id: string) {
+    return await this.favService.removeTrack(id);
   }
 }
