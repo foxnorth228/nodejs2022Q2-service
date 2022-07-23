@@ -3,15 +3,14 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-      # Only will build development stage from our dockerfile
-      target: development
+    restart: always
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     env_file:
     - docker.env
     # Run a command against the development stage of the image
-    command: npm run start:dev
+    #command: npm run start:dev
     ports:
       - 4000:4000
     depends_on:
@@ -20,10 +19,8 @@ services:
     image: postgres
     container_name: postgres
     restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - docker.env
     ports:
       - '5432:5432'
     volumes:
