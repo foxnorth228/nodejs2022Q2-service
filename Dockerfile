@@ -8,7 +8,7 @@ ENV NODE_ENV=production
 COPY doc ./doc/
 COPY node_modules ./node_modules/
 COPY dist ./dist/
-COPY docker.env ./.env
+COPY .env ./.env
 COPY prisma ./prisma/
 COPY package*.json ./
 
