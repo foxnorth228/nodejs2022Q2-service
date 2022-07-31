@@ -9,5 +9,5 @@ COPY --chown=node:node . .
 
 RUN npm run prisma:generate
 EXPOSE ${PORT}
-
+USER node
 CMD [ "npm", "run", "start:migrate:dev" ]
