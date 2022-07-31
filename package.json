@@ -19,9 +19,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "kill-port": "kill-port --port 5432",
     "prisma:generate": "npx prisma generate",
-    "start:migrate:prod": "npx prisma db push && npm run start:prod"
+    "start:migrate:dev": "npx prisma migrate deploy && npm run start:dev",
+    "start:migrate:prod": "npx prisma db push && npm run start:prod",
+    "scan:node": "docker scan node",
+    "scan:postgres": "docker scan postgres"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

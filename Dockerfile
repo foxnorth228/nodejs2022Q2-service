@@ -1,17 +1,13 @@
-FROM node:18-alpine As production
+FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /usr/app
 
-ENV NODE_ENV=production
+COPY --chown=node:node package*.json ./
 
-# Copy the bundled code from the build stage to the production image
-COPY doc ./doc/
-COPY node_modules ./node_modules/
-COPY dist ./dist/
-COPY .env ./.env
-COPY prisma ./prisma/
-COPY package*.json ./
+RUN npm install
+COPY --chown=node:node . .
 
 RUN npm run prisma:generate
-# Start the server using the production build
-CMD [ "npm", "run", "start:migrate:prod" ]
+EXPOSE ${PORT}
+
+CMD [ "npm", "run", "start:migrate:dev" ]

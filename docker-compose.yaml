@@ -1,9 +1,9 @@
 services:
   api:
     build:
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
       context: .
-    restart: always
+    restart: unless-stopped
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -14,14 +14,16 @@ services:
     depends_on:
       - postgres
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
     networks:
       - default-bridge
 
   postgres:
-    image: postgres:latest
+    build:
+      dockerfile: ./postgres/Dockerfile
+      context: .
     container_name: ${CONTAINER_NAME}
-    restart: always
+    restart: unless-stopped
     env_file: 
       - .env
     ports:
@@ -38,3 +40,4 @@ volumes:
 
 networks: 
   default-bridge:
+    driver: bridge
