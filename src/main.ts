@@ -9,7 +9,10 @@ import { FileLogger } from "./logger/loggerService";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: new FileLogger(),
+    logger: new FileLogger(process.env.LOG_DIR_PATH, 
+                           Number.parseInt(process.env.LOG_LEVEL), 
+                           Number.parseInt(process.env.LOG_SIZE)
+    ),
   });
   const file = readFileSync('doc/api.yaml');
   const yamlBody = parse(file.toString('utf8'));
