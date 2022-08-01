@@ -1,12 +1,7 @@
 import { LoggerService } from "@nestjs/common";
 import { isAbsolute, join } from "path";
-import { mkdir, createWriteStream } from "fs"
-
-process.on('exit', (code) => {
-    for (let logger of FileLogger.instances) {
-        logger.end();
-    }
-});
+import { mkdir, createWriteStream } from "fs";
+import { stat } from "fs/promises";
 
 const logLevels = [
     {
@@ -26,7 +21,10 @@ export class FileLogger implements LoggerService {
     dirName: string;
     logLevel: object;
     logSize: number;
-    static instances: FileLogger[] = [];
+    getFullPathLogFile = (value: string) => join(this.dirName, FileLogger.getLogFileName(value));
+    static fileLogName: string | null = null;
+    static toTwoSigns = (num: number): string => (num >= 10) ? num.toString() : `0${num}`;
+    static getLogFileName = (value: string) => `${value}-${FileLogger.fileLogName}.txt`;
 
     constructor(dirName: string = "", logLevel: number = 1, logSize: number = 16) {
         if (isAbsolute(dirName)) {
@@ -38,46 +36,57 @@ export class FileLogger implements LoggerService {
 
         });
         console.log(this.dirName);
-        FileLogger.instances.push(this);
         this.logLevel = {};
         const date = new Date();
-        const toTwoSigns = (num: number): string => (num >= 10) ? num.toString() : `0${num}`;
         console.log(date.getMonth());
 
-        let fileLogName: string = `${toTwoSigns(date.getDate())}${toTwoSigns(date.getMonth() + 1)}${date.getFullYear()}`;
-        fileLogName += `${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
+        let fileLogName: string = `${FileLogger.toTwoSigns(date.getDate())}`;
+        fileLogName += `${FileLogger.toTwoSigns(date.getMonth() + 1)}${date.getFullYear()}`;
+        fileLogName += `${FileLogger.toTwoSigns(date.getHours())}`;
+        fileLogName += `${FileLogger.toTwoSigns(date.getMinutes())}`;
+        fileLogName += `${FileLogger.toTwoSigns(date.getSeconds())}`;
         console.log(fileLogName);
+        FileLogger.fileLogName = fileLogName;
         for (let i = 0; i < logLevel + 1; i++) {
             for (let [key, value] of Object.entries(logLevels[i])) {
-                this.logLevel[key] = createWriteStream(join(this.dirName, `${value}-${fileLogName}.txt`));
+                this.logLevel[key] = value;
             }
         }
         this.logSize = logSize;
     }
 
     async log (message: any, ...optionalParams: any[]) {
-        this.logLevel['log'].write(`${message}\n`);
+        await this.checkSize('log');
+        this.logLevel['log'].write(await this.createMessage("LOG", message));
     }
 
     async warn (message: any, ...optionalParams: any[]) {
-        this.logLevel['warn'].write(`${message}\n`);
+        this.logLevel['warn'].write(await this.createMessage("WARNING", message));
     }
 
     async error (message: any, ...optionalParams: any[]) {
-        this.logLevel['error'].write(`${message}\n`);
+        this.logLevel['error'].write(await this.createMessage("ERROR", message));
     }
 
     async debug(message: any, ...optionalParams: any[]) {
-        this.logLevel['debug'].write(`${message}\n`);
+        this.logLevel['debug'].write(await this.createMessage("DEBUG", message));
     }
 
     async verbose(message: any, ...optionalParams: any[]) {
-        this.logLevel['verbose'].write(`${message}\n`);
+        this.logLevel['verbose'].write(await this.createMessage("VERBOSE", message));
     }
 
-    end() {
-        for(let streams of Object.values(this.logLevel)) {
-            streams.close();
-        }
+    async createMessage(type: string, message: string): Promise<string> {
+        const date = new Date();
+        let writeMessage = `[${type} ${FileLogger.toTwoSigns(date.getHours())}:`;
+        writeMessage += `${FileLogger.toTwoSigns(date.getMinutes())}:`;
+        writeMessage += `${FileLogger.toTwoSigns(date.getSeconds())}]: `;
+        writeMessage += `${message}\n`;
+        return writeMessage;
+    }
+
+    async checkSize(value: string) {
+        const a = await stat(join(this.dirName, `${value}-${FileLogger.fileLogName}.txt`));
+        console.log(a.size);
     }
 }
