@@ -1,4 +1,4 @@
-To start server outside docker, you need start docker-compose with postgres database in folder postgres,  
+To start server outside docker, you need start docker-compose with postgres database in folder postgres, and then start server  
 To start server with postgres in container, you need start docker compose file in main folder  
 Implemented npm script for vulnerabilities scanning (free solution) - scan:node and scan:postgres
 Use postgres:latest and node:18-alpine images
