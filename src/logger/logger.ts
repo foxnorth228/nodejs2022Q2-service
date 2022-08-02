@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { LoggerService, SerializeOptions } from "@nestjs/common";
+import { LoggerService } from "@nestjs/common";
 import { isAbsolute, join } from "path";
 import { mkdir } from "fs";
 import { open, FileHandle, mkdir as mkdirAsync } from "fs/promises";

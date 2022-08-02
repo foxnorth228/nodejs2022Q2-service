@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule } from '@nestjs/swagger';
 import { parse } from 'yaml';
 import { readFileSync } from 'fs';
-import { FileLogger } from "./logger/loggerService";
+import { FileLogger } from "./logger/logger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
