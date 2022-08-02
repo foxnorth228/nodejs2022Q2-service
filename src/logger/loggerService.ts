@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { LoggerService, SerializeOptions } from "@nestjs/common";
 import { isAbsolute, join } from "path";
 import { mkdir } from "fs";
@@ -7,8 +8,6 @@ import { statSync } from "fs";
 export class FileLogger implements LoggerService {
     dirName: string;
     logLevel: number;
-    logSize: number;
-    logFileFactor: number = 1024; //Kb
     logFiles: { 
         log?: FileHandle,
         error?: FileHandle,
@@ -19,8 +18,16 @@ export class FileLogger implements LoggerService {
 
     getFullPathLogFile = (dir: string, value: string) => join(this.dirName, dir, FileLogger.getLogFileName(value));
 
-    static isWritten: boolean = false;
-    static fileLogName: string | null = null;
+    static logSize: number = Number.parseInt(process.env.LOG_SIZE);
+    static fileLogName: {
+        log?: string,
+        error?: string,
+        warn?: string,
+        debug?: string,
+        verbose?: string,
+    } = {};
+
+    static logFileFactor: number = 1024; //Kb
     static instances: FileLogger[] = [];
     static logLevels = [
         {
@@ -37,7 +44,7 @@ export class FileLogger implements LoggerService {
     ];
 
     static toTwoSigns = (num: number): string => (num >= 10) ? num.toString() : `0${num}`;
-    static getLogFileName = (value: string) => `${value}-${FileLogger.fileLogName}.txt`;
+    static getLogFileName = (value: string) => `${value}-${FileLogger.fileLogName[value]}.txt`;
 
     static async sleep(ms: number) { 
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -53,6 +60,14 @@ export class FileLogger implements LoggerService {
         return fileLogName;
     }
 
+    static async closeAllFiles() {
+        for (let logger of FileLogger.instances) {
+            for (let fileHandler of Object.values(logger.logFiles)) {
+                await fileHandler.close();
+            }
+        }
+    }
+
     constructor(dirName: string = "", logLevel: number = 1) {
         this.dirName = isAbsolute(dirName) ? join(dirName, "logs") : join(process.cwd(), dirName, "logs");
         mkdir(this.dirName, (err) => {
@@ -60,10 +75,8 @@ export class FileLogger implements LoggerService {
         });
 
         this.logLevel = logLevel;
-        this.logSize = Number.parseInt(process.env.LOG_SIZE);
         this.logFiles = {};
 
-        FileLogger.fileLogName = FileLogger.createLogDataName();
         FileLogger.instances.push(this);
         this.openLogFiles();
     }
@@ -76,9 +89,25 @@ export class FileLogger implements LoggerService {
                 } catch(err) {
 
                 }
-                this.logFiles[key] = await open(join(this.dirName, value, FileLogger.getLogFileName(value)), 'w');
+                FileLogger.fileLogName[value] = FileLogger.createLogDataName();
+                this.logFiles[key] = await open(this.getFullPathLogFile(value, value), 'w');
             }
         }
+    }
+
+    async closeFiles() {
+        for (let fileHandler of Object.values(this.logFiles)) {
+            fileHandler.close();
+        }
+    }
+
+    async openFile(type: string) {
+        FileLogger.fileLogName[type] = FileLogger.createLogDataName();
+        this.logFiles[type] = await open(this.getFullPathLogFile(type, type), 'w')
+    }
+
+    async closeFile(type: string) {
+        this.logFiles[type].close();
     }
 
     async log (message: any, ...optionalParams: any[]) {
@@ -105,7 +134,7 @@ export class FileLogger implements LoggerService {
         const maxIteration: number = 6;
         let result: boolean = false;
         let i: number = 0;
-        while(!result || i < maxIteration) {
+        while(!result && i < maxIteration) {
             try {
                 const logMessage = await this.createMessage(logType, message);
                 await this.checkSize(type, type);
@@ -115,7 +144,7 @@ export class FileLogger implements LoggerService {
                 if (i >= maxIteration) {
                     console.log(err.message);
                 } else {
-                    await FileLogger.sleep(1000);
+                    await FileLogger.sleep(1000)
                 }
             } finally {
                 i += 1;
@@ -134,19 +163,14 @@ export class FileLogger implements LoggerService {
     }
 
     async checkSize(type: string, dir: string) {
-        const a = statSync(this.getFullPathLogFile(dir, type));
-        //if (a.size >= this.lo)
-    }
-
-    end() {
-
+        const file = statSync(this.getFullPathLogFile(dir, type));
+        if (file.size >= FileLogger.logSize * FileLogger.logFileFactor) {
+            await this.closeFile(type);
+            await this.openFile(type);
+        }
     }
 }
 
 process.on('exit', () => {
-    for (let logger of FileLogger.instances) {
-        for (let fileHandler of Object.values(logger.logFiles)) {
-            fileHandler.close();
-        }
-    }
+    FileLogger.closeAllFiles();
 });
