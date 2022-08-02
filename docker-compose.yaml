@@ -1,0 +1,43 @@
+services:
+  api:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    restart: unless-stopped
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+    networks:
+      - default-bridge
+
+  postgres:
+    build:
+      dockerfile: ./postgres/Dockerfile
+      context: .
+    container_name: ${CONTAINER_NAME}
+    restart: unless-stopped
+    env_file: 
+      - .env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - docker-nest-postgres:/var/lib/postgresql/data
+    networks:
+      - default-bridge
+    expose:
+      - 5432
+
+volumes:
+  docker-nest-postgres:
+
+networks: 
+  default-bridge:
+    driver: bridge

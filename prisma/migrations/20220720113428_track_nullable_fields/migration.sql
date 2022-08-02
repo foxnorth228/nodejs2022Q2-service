@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Track" ALTER COLUMN "albumId" DROP NOT NULL,
+ALTER COLUMN "artistId" DROP NOT NULL;

@@ -14,42 +14,44 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private albumServise: AlbumService) {}
+  private albumServise: AlbumService = new AlbumService();
 
   @Get()
   @HttpCode(200)
-  findAll() {
-    return this.albumServise.findAll();
+  async findAll() {
+    return await this.albumServise.findAll();
   }
 
   @Get(':id')
   @HttpCode(200)
-  findOne(@Param() params) {
-    const artist = this.albumServise.findOne(params.id);
-    return artist;
+  async findOne(@Param('id') id: string) {
+    return await this.albumServise.findOne(id);
   }
 
   @Post()
   @HttpCode(201)
-  create(@Body() createArtistDto: CreateAlbumDto) {
-    return this.albumServise.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateAlbumDto) {
+    return await this.albumServise.create(createArtistDto);
   }
 
   @Put(':id')
   @HttpCode(200)
-  update(@Body() updateArtistDto: CreateAlbumDto, @Param() params) {
-    return this.albumServise.update(params.id, updateArtistDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateArtistDto: CreateAlbumDto,
+  ) {
+    return await this.albumServise.update(id, updateArtistDto);
   }
 
   @Delete('artist/:id')
   @HttpCode(204)
-  deleteArtistFromAlbums(@Param() params) {
-    this.albumServise.deleteArtistFromAlbums(params.id);
+  async deleteArtistFromAlbums(@Param('id') id: string) {
+    await this.albumServise.deleteArtistFromAlbums(id);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param() params, @Headers() header) {
-    await this.albumServise.delete(params.id, header.host);
+  async delete(@Param('id') id: string, @Headers('host') host: string) {
+    await this.albumServise.delete(id, host);
   }
 }
