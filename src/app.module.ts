@@ -7,6 +7,7 @@ import { FavModule } from './favs/fav.module';
 import { ArtistModule } from './artists/artist.module';
 import { AlbumModule } from './albums/album.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [UserModule, TrackModule, FavModule, ArtistModule, AlbumModule],

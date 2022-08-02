@@ -111,26 +111,31 @@ export class FileLogger implements LoggerService {
     }
 
     async log (message: any, ...optionalParams: any[]) {
+        throw new Error("sss");
+        await reject();
         await this.sendMessage('log', 'LOG', message);
     }
 
     async warn (message: any, ...optionalParams: any[]) {
-        //this.logLevel['warn'].write(await this.createMessage("WARNING", message));
+        await this.sendMessage('warn', 'WARNING', message);
     }
 
     async error (message: any, ...optionalParams: any[]) {
-        //this.logLevel['error'].write(await this.createMessage("ERROR", message));
+        await this.sendMessage('error', 'ERROR', message);
     }
 
     async debug(message: any, ...optionalParams: any[]) {
-        //this.logLevel['debug'].write(await this.createMessage("DEBUG", message));
+        await this.sendMessage('debug', 'DEBUG', message);
     }
 
     async verbose(message: any, ...optionalParams: any[]) {
-        //this.logLevel['verbose'].write(await this.createMessage("VERBOSE", message));
+        await this.sendMessage('verbose', 'VERBOSE', message);
     }
 
     async sendMessage(type: string, logType: string, message: string): Promise<boolean> {
+        if (!(type in this.logFiles)) {
+            return;
+        }
         const maxIteration: number = 6;
         let result: boolean = false;
         let i: number = 0;
@@ -174,3 +179,7 @@ export class FileLogger implements LoggerService {
 process.on('exit', () => {
     FileLogger.closeAllFiles();
 });
+
+async function reject() {
+    return new Promise((resolve, reject) => reject("aa"));
+}
