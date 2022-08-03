@@ -7,7 +7,6 @@ import { parse } from 'yaml';
 import { readFileSync } from 'fs';
 import { FileLogger } from "./logger/logger";
 import { HttpExceptionFilter } from "./logger/http-exception.filter";
-import { HttpAdapterHost } from '@nestjs/core';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

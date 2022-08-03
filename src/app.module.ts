@@ -6,10 +6,11 @@ import { TrackModule } from './modules/tracks/track.module';
 import { FavModule } from './modules/favs/fav.module';
 import { ArtistModule } from './modules/artists/artist.module';
 import { AlbumModule } from './modules/albums/album.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 
 @Module({
-  imports: [UserModule, TrackModule, FavModule, ArtistModule, AlbumModule],
+  imports: [UserModule, TrackModule, FavModule, ArtistModule, AlbumModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
