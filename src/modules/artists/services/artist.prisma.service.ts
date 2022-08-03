@@ -1,5 +1,5 @@
 import { TemplatePrismaService } from 'src/secondaryFuncs/TemplatePrismaService';
-import { PrismaService } from '../../prisma/prisma';
+import { PrismaService } from '../../../prisma/prisma';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { IArtist } from '../interfaces/artist.interface';
 
