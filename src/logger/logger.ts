@@ -111,8 +111,6 @@ export class FileLogger implements LoggerService {
     }
 
     async log (message: any, ...optionalParams: any[]) {
-        throw new Error("sss");
-        await reject();
         await this.sendMessage('log', 'LOG', message);
     }
 
@@ -133,9 +131,6 @@ export class FileLogger implements LoggerService {
     }
 
     async sendMessage(type: string, logType: string, message: string): Promise<boolean> {
-        if (!(type in this.logFiles)) {
-            return;
-        }
         const maxIteration: number = 6;
         let result: boolean = false;
         let i: number = 0;

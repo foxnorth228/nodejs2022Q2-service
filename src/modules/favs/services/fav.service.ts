@@ -8,7 +8,7 @@ import { IAlbum } from '../../albums/interfaces/album.interface';
 import { ITrack } from '../../tracks/interfaces/track.interface';
 import { IFavBody } from '../interfaces/fav-body.interface';
 import { IFav } from '../interfaces/fav.interface';
-import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { ProcessorId } from 'src/secondaryFuncs/ProcessorId';
 import { FavPrismaService } from './fav.prisma.servise';
 
 const checkUnprocEntity = (elem: any, message: string) => {

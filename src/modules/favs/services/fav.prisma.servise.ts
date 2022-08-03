@@ -1,4 +1,4 @@
-import { PrismaService } from '../../prisma/prisma';
+import { PrismaService } from 'src/prisma/prisma';
 import { IArtist } from '../../artists/interfaces/artist.interface';
 import { IAlbum } from '../../albums/interfaces/album.interface';
 import { ITrack } from '../../tracks/interfaces/track.interface';

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from '../dto/create-artist.dto';
-import { sendRequest } from '../../secondaryFuncs/sendRequest';
+import { sendRequest } from 'src/secondaryFuncs/sendRequest';
 import { ArtistPrismaService } from './artist.prisma.service';
-import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { ProcessorId } from 'src/secondaryFuncs/ProcessorId';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 import { IArtist } from '../interfaces/artist.interface';
 
