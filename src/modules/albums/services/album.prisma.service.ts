@@ -1,6 +1,6 @@
 import { IAlbum } from '../interfaces/album.interface';
-import { PrismaService } from '../../prisma/prisma';
-import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
+import { PrismaService } from '../../../prisma/prisma';
+import { TemplatePrismaService } from '../../../secondaryFuncs/TemplatePrismaService';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 
 export class AlbumPrismaService extends TemplatePrismaService<IAlbum> {

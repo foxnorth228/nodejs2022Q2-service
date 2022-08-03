@@ -1,6 +1,6 @@
 import { ITrack } from '../interfaces/track.interface';
-import { PrismaService } from '../../prisma/prisma';
-import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
+import { PrismaService } from '../../../prisma/prisma';
+import { TemplatePrismaService } from '../../../secondaryFuncs/TemplatePrismaService';
 import { CreateTrackDto } from '../dto/create-track.dto';
 
 export class TrackPrismaService extends TemplatePrismaService<ITrack> {

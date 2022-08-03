@@ -2,7 +2,7 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserPrismaService } from './user.prisma.service';
-import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { ProcessorId } from '../../../secondaryFuncs/ProcessorId';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 import { IUser } from '../interfaces/user.interface';
 

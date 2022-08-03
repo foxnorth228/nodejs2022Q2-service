@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ITrack } from '../interfaces/track.interface';
 import { CreateTrackDto } from '../dto/create-track.dto';
-import { sendRequest } from '../../secondaryFuncs/sendRequest';
+import { sendRequest } from '../../../secondaryFuncs/sendRequest';
 import { TrackPrismaService } from './track.prisma.service';
-import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { ProcessorId } from '../../../secondaryFuncs/ProcessorId';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 
 @Injectable()

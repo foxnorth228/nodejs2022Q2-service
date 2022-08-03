@@ -1,13 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './users/user.module';
-import { TrackModule } from './tracks/track.module';
-import { FavModule } from './favs/fav.module';
-import { ArtistModule } from './artists/artist.module';
-import { AlbumModule } from './albums/album.module';
+import { UserModule } from './modules/users/user.module';
+import { TrackModule } from './modules/tracks/track.module';
+import { FavModule } from './modules/favs/fav.module';
+import { ArtistModule } from './modules/artists/artist.module';
+import { AlbumModule } from './modules/albums/album.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
-import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [UserModule, TrackModule, FavModule, ArtistModule, AlbumModule],

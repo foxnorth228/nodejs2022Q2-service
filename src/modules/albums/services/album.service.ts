@@ -1,8 +1,8 @@
 import { IAlbum } from '../interfaces/album.interface';
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from '../dto/create-album.dto';
-import { sendRequest } from '../../secondaryFuncs/sendRequest';
-import { ProcessorId } from '../../secondaryFuncs/ProcessorId';
+import { sendRequest } from '../../../secondaryFuncs/sendRequest';
+import { ProcessorId } from '../../../secondaryFuncs/ProcessorId';
 import { AlbumPrismaService } from './album.prisma.service';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 

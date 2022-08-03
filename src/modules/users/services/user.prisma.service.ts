@@ -1,6 +1,6 @@
 import { IUser } from '../interfaces/user.interface';
-import { PrismaService } from '../../prisma/prisma';
-import { TemplatePrismaService } from '../../secondaryFuncs/TemplatePrismaService';
+import { PrismaService } from '../../../prisma/prisma';
+import { TemplatePrismaService } from '../../../secondaryFuncs/TemplatePrismaService';
 
 export class UserPrismaService extends TemplatePrismaService<IUser> {
   private prismaService: PrismaService = new PrismaService();
