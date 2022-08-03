@@ -9,14 +9,14 @@ export class AuthService {
     private authPrismaService: AuthPrismaService = new AuthPrismaService();
 
     async signup(body: SignupUserDto) {
-
+        await this.authPrismaService.createUser(body);
     }
 
     async login(body: LoginUserDto) {
-
+        await this.authPrismaService.checkUser(body);
     }
 
     async refresh(body: RefreshDto) {
-        
+
     }
 }
