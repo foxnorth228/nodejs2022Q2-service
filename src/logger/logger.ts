@@ -1,9 +1,10 @@
 import "dotenv/config";
 import { LoggerService } from "@nestjs/common";
 import { isAbsolute, join } from "path";
-import { mkdir } from "fs";
+import { mkdir, Stats } from "fs";
 import { open, FileHandle, mkdir as mkdirAsync } from "fs/promises";
 import { statSync } from "fs";
+
 
 export class FileLogger implements LoggerService {
     dirName: string;
@@ -16,7 +17,7 @@ export class FileLogger implements LoggerService {
         verbose?: FileHandle,
     };
 
-    getFullPathLogFile = (dir: string, value: string) => join(this.dirName, dir, FileLogger.getLogFileName(value));
+    getFullPathLogFile = (dir: string, value: string): string => join(this.dirName, dir, FileLogger.getLogFileName(value));
 
     static logSize: number = Number.parseInt(process.env.LOG_SIZE);
     static fileLogName: {
@@ -26,27 +27,26 @@ export class FileLogger implements LoggerService {
         debug?: string,
         verbose?: string,
     } = {};
-
     static logFileFactor: number = 1024; //Kb
     static instances: FileLogger[] = [];
     static logLevels = [
         {
-            'log': 'log'
-        },
-        {
+            'log': 'log',
             'error': 'error',
             'warn': 'error',
         },
         {
             'debug': 'debug',
-            'verbose': 'debug'
+        },
+        {
+            'verbose': 'debug',
         },
     ];
 
     static toTwoSigns = (num: number): string => (num >= 10) ? num.toString() : `0${num}`;
-    static getLogFileName = (value: string) => `${value}-${FileLogger.fileLogName[value]}.txt`;
+    static getLogFileName = (value: string): string => `${value}-${FileLogger.fileLogName[value]}.txt`;
 
-    static async sleep(ms: number) { 
+    static async sleep(ms: number): Promise<void> { 
         return new Promise(resolve => setTimeout(resolve, ms));
     };
 
@@ -60,7 +60,7 @@ export class FileLogger implements LoggerService {
         return fileLogName;
     }
 
-    static async closeAllFiles() {
+    static async closeAllFiles(): Promise<void> {
         for (let logger of FileLogger.instances) {
             for (let fileHandler of Object.values(logger.logFiles)) {
                 await fileHandler.close();
@@ -70,18 +70,16 @@ export class FileLogger implements LoggerService {
 
     constructor(dirName: string = "", logLevel: number = 1) {
         this.dirName = isAbsolute(dirName) ? join(dirName, "logs") : join(process.cwd(), dirName, "logs");
-        mkdir(this.dirName, (err) => {
-
-        });
+        mkdir(this.dirName, (err) => {});
 
         this.logLevel = logLevel;
         this.logFiles = {};
 
         FileLogger.instances.push(this);
-        this.openLogFiles();
+        this.openFiles();
     }
 
-    async openLogFiles() {
+    async openFiles(): Promise<void> {
         for (let i = 0; i < this.logLevel + 1; ++i) {
             for (let [key, value] of Object.entries(FileLogger.logLevels[i])) {
                 try { 
@@ -95,38 +93,32 @@ export class FileLogger implements LoggerService {
         }
     }
 
-    async closeFiles() {
-        for (let fileHandler of Object.values(this.logFiles)) {
-            fileHandler.close();
-        }
-    }
-
-    async openFile(type: string) {
+    async openFile(type: string): Promise<void> {
         FileLogger.fileLogName[type] = FileLogger.createLogDataName();
         this.logFiles[type] = await open(this.getFullPathLogFile(type, type), 'w')
     }
 
-    async closeFile(type: string) {
+    async closeFile(type: string): Promise<void> {
         this.logFiles[type].close();
     }
 
-    async log (message: any, ...optionalParams: any[]) {
+    async log (message: any, ...optionalParams: any[]): Promise<void> {
         await this.sendMessage('log', 'LOG', message);
     }
 
-    async warn (message: any, ...optionalParams: any[]) {
+    async warn (message: any, ...optionalParams: any[]): Promise<void> {
         await this.sendMessage('warn', 'WARNING', message);
     }
 
-    async error (message: any, ...optionalParams: any[]) {
+    async error (message: any, ...optionalParams: any[]): Promise<void> {
         await this.sendMessage('error', 'ERROR', message);
     }
 
-    async debug(message: any, ...optionalParams: any[]) {
+    async debug(message: any, ...optionalParams: any[]): Promise<void> {
         await this.sendMessage('debug', 'DEBUG', message);
     }
 
-    async verbose(message: any, ...optionalParams: any[]) {
+    async verbose(message: any, ...optionalParams: any[]): Promise<void> {
         await this.sendMessage('verbose', 'VERBOSE', message);
     }
 
@@ -136,7 +128,7 @@ export class FileLogger implements LoggerService {
         let i: number = 0;
         while(!result && i < maxIteration) {
             try {
-                const logMessage = await this.createMessage(logType, message);
+                const logMessage: string = await this.createMessage(logType, message);
                 await this.checkSize(type, type);
                 await this.logFiles[type].write(logMessage);
                 result = true;
@@ -154,16 +146,16 @@ export class FileLogger implements LoggerService {
     }
 
     async createMessage(type: string, message: string): Promise<string> {
-        const date = new Date();
-        let writeMessage = `[${type} ${FileLogger.toTwoSigns(date.getHours())}:`;
+        const date: Date = new Date();
+        let writeMessage: string = `[${type} ${FileLogger.toTwoSigns(date.getHours())}:`;
         writeMessage += `${FileLogger.toTwoSigns(date.getMinutes())}:`;
         writeMessage += `${FileLogger.toTwoSigns(date.getSeconds())}]: `;
         writeMessage += `${message}\n`;
         return writeMessage;
     }
 
-    async checkSize(type: string, dir: string) {
-        const file = statSync(this.getFullPathLogFile(dir, type));
+    async checkSize(type: string, dir: string): Promise<void> {
+        const file: Stats = statSync(this.getFullPathLogFile(dir, type));
         if (file.size >= FileLogger.logSize * FileLogger.logFileFactor) {
             await this.closeFile(type);
             await this.openFile(type);
@@ -174,7 +166,3 @@ export class FileLogger implements LoggerService {
 process.on('exit', () => {
     FileLogger.closeAllFiles();
 });
-
-async function reject() {
-    return new Promise((resolve, reject) => reject("aa"));
-}

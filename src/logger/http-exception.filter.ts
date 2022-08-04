@@ -33,10 +33,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 const logger = new Logger();
 process.on("unhandledRejection", (reason, promise) => {
     logger.error("Catch reject");
-    console.log("Catch reject")
+    console.log("Catch reject");
+    process.exit(1);
 });
 
 process.on("uncaughtException", (err, origin) => {
     logger.error("Catch exception")
     console.log("Catch exception")
-})
+});

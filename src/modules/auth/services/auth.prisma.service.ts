@@ -1,21 +1,22 @@
 import { IUser } from "src/modules/users/interfaces/user.interface";
 import { PrismaService } from "src/prisma/prisma";
-import { SignupUserDto } from ".././dtos/signup-user.dto";
 import { LoginUserDto } from ".././dtos/login-user.dto";
 
 export class AuthPrismaService {
     private prismaService: PrismaService = new PrismaService();
 
-    async createUser(user: SignupUserDto) {
-        /*const newUser = await this.prismaService.user.create({
-            where: {
-
-            },
+    async createUser(user: IUser): Promise<IUser | null> {
+        const newUser = await this.prismaService.user.create({
             data: {
+                id: user.id,
+                version: user.version,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
                 login: user.login,
                 password: user.password,
             }
-        })*/
+        })
+        return newUser;
     }
 
     async checkUser(user: LoginUserDto): Promise<IUser | null> {
@@ -26,4 +27,13 @@ export class AuthPrismaService {
         })
         return checkUser;
     }
+
+    async findOne(id: string): Promise<IUser | null> {
+        const user = await this.prismaService.user.findUnique({
+          where: {
+            id: id,
+          },
+        });
+        return user;
+      }
 }

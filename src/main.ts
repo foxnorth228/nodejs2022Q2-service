@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -8,12 +8,14 @@ import { readFileSync } from 'fs';
 import { FileLogger } from "./logger/logger";
 import { HttpExceptionFilter } from "./logger/http-exception.filter";
 
+let server: INestApplication;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new FileLogger(process.env.LOG_DIR_PATH, 
                            Number.parseInt(process.env.LOG_LEVEL),
     ),
   });
+  server = app;
   app.useGlobalFilters(new HttpExceptionFilter());
   const file = readFileSync('doc/api.yaml');
   const yamlBody = parse(file.toString('utf8'));
@@ -23,3 +25,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT);
 }
 bootstrap();
+
+process.on("uncaughtException", async (err, origin) => {
+    await server.close();
+});
