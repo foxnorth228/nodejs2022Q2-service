@@ -20,16 +20,16 @@ export class AuthPrismaService {
     }
 
     async checkUser(user: LoginUserDto): Promise<IUser | null> {
-        const checkUser = await this.prismaService.user.findFirst({
+        const checkUser: IUser | null = await this.prismaService.user.findFirst({
             where: {
                 login: user.login,
             }
-        })
+        });
         return checkUser;
     }
 
     async findOne(id: string): Promise<IUser | null> {
-        const user = await this.prismaService.user.findUnique({
+        const user: IUser | null = await this.prismaService.user.findUnique({
           where: {
             id: id,
           },
