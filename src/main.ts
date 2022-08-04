@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { parse } from 'yaml';
 import { readFileSync } from 'fs';
 import { FileLogger } from "./logger/logger";
 import { HttpExceptionFilter } from "./logger/http-exception.filter";
+import { throwError } from 'rxjs';
 
 let server: INestApplication;
 async function bootstrap() {
@@ -23,9 +24,24 @@ async function bootstrap() {
   SwaggerModule.setup('/api', app, document);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.listen(process.env.PORT);
+  throw new Error("a")
 }
 bootstrap();
 
+async function sleep(ms: number){
+   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const logger = new Logger();
+process.on("unhandledRejection", async (reason, promise) => {
+  logger.error("Catch reject");
+  console.log("Catch reject");
+  await sleep(2500);
+  process.exit(1);
+});
 process.on("uncaughtException", async (err, origin) => {
-    await server.close();
+  logger.error("Catch exception")
+  console.log("Catch exception")
+  await sleep(2500);
+  process.exit(1);
 });
