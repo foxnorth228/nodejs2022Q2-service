@@ -103,23 +103,23 @@ export class FileLogger implements LoggerService {
     }
 
     async log (message: any, ...optionalParams: any[]): Promise<void> {
-        await this.sendMessage('log', 'LOG', message);
+        this.sendMessage('log', 'LOG', message);
     }
 
     async warn (message: any, ...optionalParams: any[]): Promise<void> {
-        await this.sendMessage('warn', 'WARNING', message);
+        this.sendMessage('warn', 'WARNING', message);
     }
 
     async error (message: any, ...optionalParams: any[]): Promise<void> {
-        await this.sendMessage('error', 'ERROR', message);
+        this.sendMessage('error', 'ERROR', message);
     }
 
     async debug(message: any, ...optionalParams: any[]): Promise<void> {
-        await this.sendMessage('debug', 'DEBUG', message);
+        this.sendMessage('debug', 'DEBUG', message);
     }
 
     async verbose(message: any, ...optionalParams: any[]): Promise<void> {
-        await this.sendMessage('verbose', 'VERBOSE', message);
+        this.sendMessage('verbose', 'VERBOSE', message);
     }
 
     async sendMessage(type: string, logType: string, message: string): Promise<boolean> {
