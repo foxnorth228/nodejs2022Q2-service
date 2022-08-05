@@ -101,5 +101,9 @@ export class AuthService {
             ),
         }
     }
+
+    async verify(body) {
+
+    }
 }
 

@@ -1,23 +1,20 @@
-/*import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
+import "dotenv/config";
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { sendRequest } from './secondaryFuncs/sendRequest';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private readonly authService: AuthService) {}
-
     async canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest();
         const authorizationHeader =
             request.headers['authorization'] ||
             request.headers['Authorization'];
         try {
-            const { data } = await this.authService.verifyToken(
-                authorizationHeader,
-            );
+            const data = await sendRequest(process.env.VERIFY_TOKEN_URL);
             request.user = data;
             return true;
         } catch (err) {
             return false;
         }
     }
-}*/
+}

@@ -35,5 +35,5 @@ export class AuthPrismaService {
           },
         });
         return user;
-      }
+    }
 }

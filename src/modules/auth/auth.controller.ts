@@ -26,4 +26,10 @@ export class AuthController {
     async refresh(@Body() body: RefreshDto) {
         return await this.authService.refresh(body);
     }
+
+    @HttpCode(200)
+    @Post('verify')
+    async verify(@Body() body) {
+        return await this.authService.verify(body);
+    }
 }
