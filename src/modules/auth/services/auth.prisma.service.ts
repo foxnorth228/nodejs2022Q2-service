@@ -19,10 +19,10 @@ export class AuthPrismaService {
         return newUser;
     }
 
-    async checkUser(user: LoginUserDto): Promise<IUser | null> {
+    async checkUser(login: string): Promise<IUser | null> {
         const checkUser: IUser | null = await this.prismaService.user.findFirst({
             where: {
-                login: user.login,
+                login: login,
             }
         });
         return checkUser;

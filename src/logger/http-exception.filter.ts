@@ -18,7 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             message = "Something in the server crushed";
         }
-        this.logger.error(`statusCode: ${status}`);
+        this.logger.error(`statusCode: ${status}, message: ${exception}`);
         response
             .status(status)
             .json({

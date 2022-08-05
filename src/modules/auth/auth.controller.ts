@@ -12,7 +12,7 @@ export class AuthController {
     @HttpCode(201)
     @Post('signup')
     async signup(@Body() body: SignupUserDto) {
-        await this.authService.signup(body);
+        return await this.authService.signup(body);
     }
 
     @HttpCode(200)
@@ -24,6 +24,6 @@ export class AuthController {
     @HttpCode(200)
     @Post('refresh') 
     async refresh(@Body() body: RefreshDto) {
-        await this.authService.refresh(body);
+        return await this.authService.refresh(body);
     }
 }
