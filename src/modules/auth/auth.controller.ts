@@ -3,6 +3,7 @@ import { AuthService } from "./services/auth.service";
 import { SignupUserDto } from "./dtos/signup-user.dto";
 import { LoginUserDto } from "./dtos/login-user.dto";
 import { RefreshDto } from "./dtos/refresh.dto";
+import { VerifyTokenDto } from "./dtos/verify-token.dto";
 
 @Controller('auth') 
 export class AuthController {
@@ -29,7 +30,7 @@ export class AuthController {
 
     @HttpCode(200)
     @Post('verify')
-    async verify(@Body() body) {
+    async verify(@Body() body: VerifyTokenDto) {
         return await this.authService.verify(body);
     }
 }

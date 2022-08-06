@@ -1,10 +1,11 @@
 import "dotenv/config";
-import { Injectable, ForbiddenException } from "@nestjs/common";
+import { Injectable, ForbiddenException, NotFoundException } from "@nestjs/common";
 import { AuthPrismaService } from "./auth.prisma.service";
 import { SignupUserDto } from ".././dtos/signup-user.dto";
 import { LoginUserDto } from ".././dtos/login-user.dto";
 import { ProcessorId } from "src/secondaryFuncs/ProcessorId";
 import { RefreshDto } from ".././dtos/refresh.dto";
+import { VerifyTokenDto } from "../dtos/verify-token.dto";
 import { IUser } from "src/modules/users/interfaces/user.interface";
 import { JwtService } from "@nestjs/jwt";
 import { compare, hash } from "bcrypt";
@@ -102,8 +103,26 @@ export class AuthService {
         }
     }
 
-    async verify(body) {
-
+    async verify(body: VerifyTokenDto) {
+        let a: { userId: string; };
+        try {   
+            a = await this.jwtService.verifyAsync(body.token, {
+                secret: process.env.JWT_SECRET_KEY,
+            });
+        } catch(err) {
+            if(err instanceof TokenExpiredError) {
+                throw new ForbiddenException("Your token is expired");
+            } else if (err instanceof JsonWebTokenError) {
+                throw new ForbiddenException("You send invalid token")
+            } else {
+                throw err;
+            }
+        }
+        const user = await this.authPrismaService.findOne(a.userId);
+        if(user === null) {
+            throw new NotFoundException(`User with ${user.id} didn't exist`);
+        } 
+        return `Verification success`;
     }
 }
 
