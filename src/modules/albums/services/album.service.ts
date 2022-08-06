@@ -5,6 +5,7 @@ import { sendRequest } from '../../../secondaryFuncs/sendRequest';
 import { ProcessorId } from '../../../secondaryFuncs/ProcessorId';
 import { AlbumPrismaService } from './album.prisma.service';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
+import { getUnprocessedToken } from 'src/secondaryFuncs/getTokenFromHeader';
 
 @Injectable()
 export class AlbumService {
@@ -44,12 +45,16 @@ export class AlbumService {
     return updatedAlbum;
   }
 
-  async delete(id: string, host: string): Promise<void> {
+  async delete(id: string, host: string, header: any): Promise<void> {
     ProcessorId.checkValidation(id);
     const album: IAlbum = await this.albumPrismaService.findOne(id);
     checkNotFound(album, `Album with id: "${id}" is not exist`);
-    await sendRequest(`http://${host}/favs/album/${id}`, 'DELETE');
-    await sendRequest(`http://${host}/track/album/${id}`, 'DELETE');
+    await sendRequest(`http://${host}/favs/album/${id}`, 'DELETE', {}, {
+      Authorization: getUnprocessedToken(header),
+    });
+    await sendRequest(`http://${host}/track/album/${id}`, 'DELETE',{}, {
+      Authorization: getUnprocessedToken(header),
+    });
     await this.albumPrismaService.delete(id);
   }
 

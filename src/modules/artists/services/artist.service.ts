@@ -5,6 +5,7 @@ import { ArtistPrismaService } from './artist.prisma.service';
 import { ProcessorId } from 'src/secondaryFuncs/ProcessorId';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
 import { IArtist } from '../interfaces/artist.interface';
+import { getUnprocessedToken } from 'src/secondaryFuncs/getTokenFromHeader';
 
 @Injectable()
 export class ArtistService {
@@ -45,13 +46,19 @@ export class ArtistService {
     return updatedArtist;
   }
 
-  async delete(id: string, host: string): Promise<void> {
+  async delete(id: string, host: string, header): Promise<void> {
     ProcessorId.checkValidation(id);
     const artist: IArtist = await this.artistPrismaService.findOne(id);
     checkNotFound(artist, `Artist with id: "${id}" is not exist`);
-    sendRequest(`http://${host}/favs/artist/${id}`, 'DELETE');
-    sendRequest(`http://${host}/album/artist/${id}`, 'DELETE');
-    sendRequest(`http://${host}/track/artist/${id}`, 'DELETE');
+    await sendRequest(`http://${host}/favs/artist/${id}`, 'DELETE', {}, {
+      Authorization: getUnprocessedToken(header),
+    });
+    await sendRequest(`http://${host}/album/artist/${id}`, 'DELETE', {}, {
+      Authorization: getUnprocessedToken(header),
+    });
+    await sendRequest(`http://${host}/track/artist/${id}`, 'DELETE', {}, {
+      Authorization: getUnprocessedToken(header),
+    });
     await this.artistPrismaService.delete(id);
   }
 }

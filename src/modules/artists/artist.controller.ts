@@ -52,7 +52,7 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(AuthGuard)
-  async delete(@Param('id') id: string, @Headers('host') host: string) {
-    await this.artistservice.delete(id, host);
+  async delete(@Param('id') id: string, @Headers('host') host: string, @Headers() headers) {
+    await this.artistservice.delete(id, host, headers);
   }
 }

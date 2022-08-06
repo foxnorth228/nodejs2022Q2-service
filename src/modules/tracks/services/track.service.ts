@@ -5,6 +5,7 @@ import { sendRequest } from '../../../secondaryFuncs/sendRequest';
 import { TrackPrismaService } from './track.prisma.service';
 import { ProcessorId } from '../../../secondaryFuncs/ProcessorId';
 import { checkNotFound } from 'src/secondaryFuncs/checkNotFound';
+import { getUnprocessedToken } from 'src/secondaryFuncs/getTokenFromHeader';
 
 @Injectable()
 export class TrackService {
@@ -45,11 +46,13 @@ export class TrackService {
     return updatedTrack;
   }
 
-  async delete(id: string, host): Promise<void> {
+  async delete(id: string, host, header): Promise<void> {
     ProcessorId.checkValidation(id);
     const track: ITrack = await this.trackPrismaService.findOne(id);
     checkNotFound(track, `Track with id: "${id}" is not exist`);
-    await sendRequest(`http://${host}/favs/track/${id}`, 'DELETE');
+    await sendRequest(`http://${host}/favs/track/${id}`, 'DELETE', {}, {
+      Authorization: getUnprocessedToken(header),
+    });
     await this.trackPrismaService.delete(id);
   }
 

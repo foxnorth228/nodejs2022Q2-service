@@ -51,8 +51,7 @@ export class TrackController {
   @HttpCode(204)
   @UseGuards(AuthGuard)
   async delete(@Param('id') id: string, @Headers('host') host: string, @Headers() header) {
-    console.log(header['authorization'] || header['Authorization']);
-    await this.trackService.delete(id, host);
+    await this.trackService.delete(id, host, header);
   }
 
   @Delete('artist/:id')
