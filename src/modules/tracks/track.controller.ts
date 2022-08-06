@@ -9,7 +9,6 @@ import {
   Body,
   Headers,
   UseGuards,
-  Header,
 } from '@nestjs/common';
 import { TrackService } from './services/track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -50,7 +49,11 @@ export class TrackController {
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(AuthGuard)
-  async delete(@Param('id') id: string, @Headers('host') host: string, @Headers() header) {
+  async delete(
+    @Param('id') id: string,
+    @Headers('host') host: string,
+    @Headers() header,
+  ) {
     await this.trackService.delete(id, host, header);
   }
 

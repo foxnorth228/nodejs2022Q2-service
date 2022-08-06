@@ -1,22 +1,20 @@
 import 'dotenv/config';
-import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule } from '@nestjs/swagger';
 import { parse } from 'yaml';
 import { readFileSync } from 'fs';
-import { FileLogger } from "./logger/logger";
-import { HttpExceptionFilter } from "./logger/http-exception.filter";
-import { throwError } from 'rxjs';
+import { FileLogger } from './logger/logger';
+import { HttpExceptionFilter } from './logger/http-exception.filter';
 
-let server: INestApplication;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: new FileLogger(process.env.LOG_DIR_PATH, 
-                           Number.parseInt(process.env.LOG_LEVEL),
+    logger: new FileLogger(
+      process.env.LOG_DIR_PATH,
+      Number.parseInt(process.env.LOG_LEVEL),
     ),
   });
-  server = app;
   app.useGlobalFilters(new HttpExceptionFilter());
   const file = readFileSync('doc/api.yaml');
   const yamlBody = parse(file.toString('utf8'));
@@ -27,20 +25,20 @@ async function bootstrap() {
 }
 bootstrap();
 
-async function sleep(ms: number){
-   return new Promise(resolve => setTimeout(resolve, ms));
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const logger = new Logger();
-process.on("unhandledRejection", async (reason, promise) => {
-  logger.error("Catch reject");
-  console.log("Catch reject");
+process.on('unhandledRejection', async () => {
+  logger.error('Catch reject');
+  console.log('Catch reject');
   await sleep(2500);
   process.exit(1);
 });
-process.on("uncaughtException", async (err, origin) => {
-  logger.error("Catch exception")
-  console.log("Catch exception")
+process.on('uncaughtException', async () => {
+  logger.error('Catch exception');
+  console.log('Catch exception');
   await sleep(2500);
   process.exit(1);
 });

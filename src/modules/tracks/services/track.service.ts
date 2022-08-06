@@ -50,9 +50,14 @@ export class TrackService {
     ProcessorId.checkValidation(id);
     const track: ITrack = await this.trackPrismaService.findOne(id);
     checkNotFound(track, `Track with id: "${id}" is not exist`);
-    await sendRequest(`http://${host}/favs/track/${id}`, 'DELETE', {}, {
-      Authorization: getUnprocessedToken(header),
-    });
+    await sendRequest(
+      `http://${host}/favs/track/${id}`,
+      'DELETE',
+      {},
+      {
+        Authorization: getUnprocessedToken(header),
+      },
+    );
     await this.trackPrismaService.delete(id);
   }
 

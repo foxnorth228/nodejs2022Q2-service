@@ -8,7 +8,7 @@ import {
   Param,
   Body,
   Headers,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ArtistService } from './services/artist.service';
@@ -52,7 +52,11 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(AuthGuard)
-  async delete(@Param('id') id: string, @Headers('host') host: string, @Headers() headers) {
+  async delete(
+    @Param('id') id: string,
+    @Headers('host') host: string,
+    @Headers() headers,
+  ) {
     await this.artistservice.delete(id, host, headers);
   }
 }

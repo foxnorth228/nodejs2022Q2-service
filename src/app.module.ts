@@ -10,7 +10,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 
 @Module({
-  imports: [UserModule, TrackModule, FavModule, ArtistModule, AlbumModule, AuthModule],
+  imports: [
+    UserModule,
+    TrackModule,
+    FavModule,
+    ArtistModule,
+    AlbumModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

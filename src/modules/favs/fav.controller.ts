@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Delete, HttpCode, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  HttpCode,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { FavService } from './services/fav.service';
 import { AuthGuard } from 'src/auth.guard';
 

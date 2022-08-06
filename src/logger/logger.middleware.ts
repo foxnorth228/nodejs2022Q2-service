@@ -12,7 +12,7 @@ export class LoggerMiddleware implements NestMiddleware {
       this.logger.log(
         `${method} ${originalUrl} ${JSON.stringify(body)} - ${statusCode}`,
       );
-    })
+    });
     next();
   }
 }

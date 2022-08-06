@@ -8,7 +8,7 @@ import {
   Param,
   Body,
   Headers,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from './services/album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -59,7 +59,11 @@ export class AlbumController {
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(AuthGuard)
-  async delete(@Param('id') id: string, @Headers('host') host: string, @Headers() header) {
+  async delete(
+    @Param('id') id: string,
+    @Headers('host') host: string,
+    @Headers() header,
+  ) {
     await this.albumServise.delete(id, host, header);
   }
 }

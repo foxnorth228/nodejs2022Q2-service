@@ -49,12 +49,22 @@ export class AlbumService {
     ProcessorId.checkValidation(id);
     const album: IAlbum = await this.albumPrismaService.findOne(id);
     checkNotFound(album, `Album with id: "${id}" is not exist`);
-    await sendRequest(`http://${host}/favs/album/${id}`, 'DELETE', {}, {
-      Authorization: getUnprocessedToken(header),
-    });
-    await sendRequest(`http://${host}/track/album/${id}`, 'DELETE',{}, {
-      Authorization: getUnprocessedToken(header),
-    });
+    await sendRequest(
+      `http://${host}/favs/album/${id}`,
+      'DELETE',
+      {},
+      {
+        Authorization: getUnprocessedToken(header),
+      },
+    );
+    await sendRequest(
+      `http://${host}/track/album/${id}`,
+      'DELETE',
+      {},
+      {
+        Authorization: getUnprocessedToken(header),
+      },
+    );
     await this.albumPrismaService.delete(id);
   }
 

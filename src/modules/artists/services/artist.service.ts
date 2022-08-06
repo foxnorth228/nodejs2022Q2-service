@@ -50,15 +50,30 @@ export class ArtistService {
     ProcessorId.checkValidation(id);
     const artist: IArtist = await this.artistPrismaService.findOne(id);
     checkNotFound(artist, `Artist with id: "${id}" is not exist`);
-    await sendRequest(`http://${host}/favs/artist/${id}`, 'DELETE', {}, {
-      Authorization: getUnprocessedToken(header),
-    });
-    await sendRequest(`http://${host}/album/artist/${id}`, 'DELETE', {}, {
-      Authorization: getUnprocessedToken(header),
-    });
-    await sendRequest(`http://${host}/track/artist/${id}`, 'DELETE', {}, {
-      Authorization: getUnprocessedToken(header),
-    });
+    await sendRequest(
+      `http://${host}/favs/artist/${id}`,
+      'DELETE',
+      {},
+      {
+        Authorization: getUnprocessedToken(header),
+      },
+    );
+    await sendRequest(
+      `http://${host}/album/artist/${id}`,
+      'DELETE',
+      {},
+      {
+        Authorization: getUnprocessedToken(header),
+      },
+    );
+    await sendRequest(
+      `http://${host}/track/artist/${id}`,
+      'DELETE',
+      {},
+      {
+        Authorization: getUnprocessedToken(header),
+      },
+    );
     await this.artistPrismaService.delete(id);
   }
 }
