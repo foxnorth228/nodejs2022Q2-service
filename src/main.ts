@@ -30,14 +30,15 @@ async function sleep(ms: number) {
 }
 
 const logger = new Logger();
-process.on('unhandledRejection', async () => {
-  logger.error('Catch reject');
+process.on('unhandledRejection', async (promise, reason) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+
   console.log('Catch reject');
   await sleep(2500);
   process.exit(1);
 });
-process.on('uncaughtException', async () => {
-  logger.error('Catch exception');
+process.on('uncaughtException', async (err, origin) => {
+  logger.error(`Catch error ${err} /nFrom origin ${origin}`);
   console.log('Catch exception');
   await sleep(2500);
   process.exit(1);

@@ -77,14 +77,12 @@ export class FileLogger implements LoggerService {
       ? join(dirName, 'logs')
       : join(process.cwd(), dirName, 'logs');
     mkdir(this.dirName, (err) => {
-      if (err instanceof Error) {
+      if (err instanceof Error && err?.code !== 'EEXIST') {
         throw err;
       }
     });
-
     this.logLevel = logLevel;
     this.logFiles = {};
-
     FileLogger.instances.push(this);
     this.openFiles();
   }
