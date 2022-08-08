@@ -1,4 +1,9 @@
-README and pull request description will be added after Monday
+To start server outside docker, you need start docker-compose with postgres database in folder postgres, and then start server  
+Logging system and exception filter located in src/logger, uncautchedException and unhandledRejection catch in src/main.ts with process events  
+3 log levels - 0: [log, error, warn], 1: [debug], 2: [verbose]  
+Logs write into LOG_DIR_FILE(env variable), into folder logs, in with folder exist log folder(for logs), error folder(for errors and warnings), debug folder(for debug and verbose), files is named with current time
+Auth system located into src/modules/auth folder and src/auth.guard.ts file
+If have some questions discord: whyTurtle#3475
 # Home Library Service
 
 ## Prerequisites
